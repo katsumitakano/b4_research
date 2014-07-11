@@ -1,0 +1,6 @@
+sandbox/*
+csamples/*
+msamples/*
+*.dat
+*.txt
+*~
