@@ -15,6 +15,8 @@
 
 import re
 import os
+import time
+import datetime
 from BeautifulSoup import BeautifulSoup
 
 
@@ -62,7 +64,13 @@ def main(save_file = 'material_terms.txt'):
 
 
 if __name__ == "__main__":
+
+    start = time.time()
     main()
+    end = time.time()
+    with open('process.log', 'a') as f:
+        log = "%s %s %f sec\n" % (str(datetime.datetime.now()), __file__, (end - start))
+        f.write( log )
 
 
 #------------------------テスト -----------------------------

@@ -1,6 +1,7 @@
 sandbox/*
 csamples/*
 msamples/*
+*.log
 *.dat
 *.txt
 *~
