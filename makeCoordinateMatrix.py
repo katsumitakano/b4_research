@@ -9,8 +9,11 @@ def makeMatrix():
     """
     if os.path.isfile( 'coordinateMatrix.dat' ):
         os.remove( 'coordinateMatrix.dat' )
+    if os.path.isfile( 'coordinateRelation.dat' ):
+        os.remove( 'coordinateRelation.dat' )
     
     f_matrix   = open( 'coordinateMatrix.dat', 'a' )
+    f_relation = open( 'coordinateRelation.dat', 'a' )
 
     # 重複の無い単語リストを生成
     uniterms = set()
@@ -25,10 +28,12 @@ def makeMatrix():
             if val:
                 f_matrix.write("%d %d %f\n" % (i, j, val))
 
+        f_relation.write("%s %d\n" % (term, i))
         print p # 進捗確認
         p += 1
 
     f_matrix.close()
+    f_relation.close()
 
 
 if __name__ == "__main__":
