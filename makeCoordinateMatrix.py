@@ -18,7 +18,8 @@ def makeMatrix():
     # 重複の無い単語リストを生成
     uniterms = set()
     for line in open( 'material_terms.txt'):
-        uniterms = uniterms | set(line.split(','))
+        l_line = line.rstrip().split(',')
+        uniterms = uniterms | set(l_line)
 
     p = 0
     # Coordinate形式の疎行列を生成
