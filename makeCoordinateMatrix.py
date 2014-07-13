@@ -33,7 +33,7 @@ def makeMatrix():
     # Coordinate形式の疎行列を生成
     for i, term in enumerate(uniterms):
         for j, line in enumerate(open( 'material_terms.txt' )):
-            val = line.split(',').count( term )
+            val = line.rstrip().split(',').count( term )
             if val:
                 f_matrix.write("%d %d %f\n" % (i, j, val))
 
