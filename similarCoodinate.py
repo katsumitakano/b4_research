@@ -12,12 +12,16 @@ def similar(i_l1, i_l2):
     # l1 < l2にする
     if  i_l1 > i_l2: (i_l1, i_l2) = (i_l2, i_l1)
 
-    # 【一時的！！】文脈数を889と決め打ち
-    vector1 = [0 for _ in range(889)]
-    vector2 = [0 for _ in range(889)]
-    for line in open('coordinateMatrix.dat'):
-        i_j_val = line.split(' ')
-        i, j, val = int(i_j_val[0]), int(i_j_val[1]), float(i_j_val[2].rstrip())
+    coo_matrix = open('coordinateMatrix.dat')
+    header   = coo_matrix.readline().rstrip().split(' ')
+    row, col = int(header[0]), int(header[1])
+
+    # 次元数の0ベクトルを確保
+    vector1 = [0 for _ in range(col)]
+    vector2 = [0 for _ in range(col)]
+    for line in coo_matrix:
+        i_j_val = line.rstrip().split(' ')
+        i, j, val = int(i_j_val[0]), int(i_j_val[1]), float(i_j_val[2])
         if i > i_l2: break # これ以上検索する意味が無い
 
         if i == i_l1: vector1[j] = val
