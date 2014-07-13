@@ -30,7 +30,7 @@ def getTermsListsFromXml(xml):
     termlist = []
     for paragraph in soup.findAll('paragraph'):
         for luw in paragraph.findAll('luw'): # TODO: この辺高速化(lxml使う？)
-            if re.match(u'名詞|動詞', luw['l_pos']): # 名詞または動詞の単語のみ抽出
+            if re.match(u'名詞|動詞|形容詞', luw['l_pos']): # 名詞/動詞/形容詞の単語のみ抽出
                 termlist.append(luw['l_lemma'])
         rlist.append( termlist )
         termlist = []
