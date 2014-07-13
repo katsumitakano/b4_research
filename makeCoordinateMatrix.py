@@ -2,7 +2,10 @@
 # 対象ファイルは material_terms.txt
 
 import os
+from mylib import measure_time
 
+
+@measure_time
 def makeMatrix():
     """
     material_terms.txt からCoordinate形式の行列を作成する
