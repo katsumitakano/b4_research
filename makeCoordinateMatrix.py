@@ -18,11 +18,16 @@ def makeMatrix():
     f_matrix   = open( 'coordinateMatrix.dat', 'a' )
     f_relation = open( 'coordinateRelation.dat', 'a' )
 
-    # 重複の無い単語リストを生成
-    uniterms = set()
+    
+    uniterms  = set()   # 重複の無い単語リスト
+    dimention = 0       # 次元数（文脈数）
     for line in open( 'material_terms.txt'):
         l_line = line.rstrip().split(',')
         uniterms = uniterms | set(l_line)
+        dimention += 1
+
+    # ファイルの先頭に行列のサイズを書く
+    f_matrix.write("%d %d\n" % (len(uniterms), dimention))
 
     p = 0
     # Coordinate形式の疎行列を生成
