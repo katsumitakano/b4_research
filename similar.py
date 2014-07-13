@@ -54,7 +54,7 @@ if __name__ == "__main__":
         for k2 in term_dict.keys():
             sim = similar(term_dict[k1], term_dict[k2])
             if sim == 0: continue
-            print "%s\t%s\t%f" % (k1, k2, sim)
+            print "%f\t%s\t%s" % (sim, k1, k2)
 
 
 #------------------------テスト -----------------------------
