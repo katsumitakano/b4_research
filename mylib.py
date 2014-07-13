@@ -12,10 +12,11 @@ def measure_time(func):
         result = func(*args, **kwargs) # 関数の実行
         end = time.time()
         Date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        Name = func.__name__
+        FileName = __file__
+        FuncName = func.__name__
         Time = end - start
-        print "%s %s %f sec\n" % (Date, Name, Time)
-        logfile.write("%s %s %f sec\n" % (Date, Name, Time))
+        print "%s %s:%s() %f sec\n" % (Date, FileName, FuncName, Time)
+        logfile.write("%s %s:%s() %f sec\n" % (Date, FileName, FuncName, Time))
         logfile.close()
         return result
     return wrapper
