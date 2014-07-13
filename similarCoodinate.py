@@ -17,8 +17,8 @@ def similar(i_l1, i_l2):
     row, col = int(header[0]), int(header[1])
 
     # 次元数の0ベクトルを確保
-    vector1 = [0 for _ in range(col)]
-    vector2 = [0 for _ in range(col)]
+    vector1 = [0 for _ in xrange(col)]
+    vector2 = [0 for _ in xrange(col)]
     for line in coo_matrix:
         i_j_val = line.rstrip().split(' ')
         i, j, val = int(i_j_val[0]), int(i_j_val[1]), float(i_j_val[2])
@@ -27,19 +27,17 @@ def similar(i_l1, i_l2):
         if i == i_l1: vector1[j] = val
         if i == i_l2: vector2[j] = val
 
-#    print vector1
-#    print vector2
     return cosine(vector1, vector2)
 
 
-def cosine(vector1_i, vector2_i):
+def cosine(vector1, vector2):
     '''
     ベクトル同士のコサイン類似度を計算
     '''
-    numerator = sum([vector1_i[i] * vector2_i[i] for i in xrange(len(vector1_i))])
-    deno1 = math.sqrt( sum([v*v for v in vector1_i]) )
-    deno2 = math.sqrt( sum([v*v for v in vector2_i]) )
-    denominator = float(deno1 * deno2)
+    numerator = sum([vector1[i] * vector2[i] for i in xrange(len(vector1))])
+    deno1 = math.sqrt( sum([v*v for v in vector1]) )
+    deno2 = math.sqrt( sum([v*v for v in vector2]) )
+    denominator = deno1 * deno2
     return numerator/denominator
 
 if __name__ == "__main__":
@@ -54,14 +52,14 @@ if __name__ == "__main__":
         term_dict = [v.split(' ') for v in f.readlines()]
         term_dict = dict(term_dict)
 
-    print "%s と %s の類似度 " % (t1, t2)
-    print similar(int(term_dict[t1]), int(term_dict[t2]))
+    # print "%s と %s の類似度 " % (t1, t2)
+    # print similar(int(term_dict[t1]), int(term_dict[t2]))
 
-    # for k1 in term_dict.keys():
-    #     for k2 in term_dict.keys():
-    #         sim = similar(int(term_dict[k1]), int(term_dict[k2]))
-    #         if sim == 0: continue
-    #         print "%s\t%s\t%f" % (k1, k2, sim)
+    for k1 in term_dict.keys():
+        for k2 in term_dict.keys():
+            sim = similar(int(term_dict[k1]), int(term_dict[k2]))
+            if sim == 0: continue
+            print "%s\t%s\t%f" % (k1, k2, sim)
 
 
 #------------------------テスト -----------------------------
