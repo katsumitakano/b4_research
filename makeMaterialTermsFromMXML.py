@@ -57,6 +57,7 @@ def main(save_file = 'material_terms.txt'):
         with open( _file, 'r') as f:
             xml = f.read()
         for l in getTermsListsFromXml(xml):
+            if l == []: continue # 単語抽出出来なかった時は書き込まない
             wfile.write(','.join(l).encode('utf_8') + '\n')
         # 進捗を表示
         print p
