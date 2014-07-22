@@ -15,13 +15,14 @@
 
 import re
 import os
+import sys
 import time
 import datetime
 from BeautifulSoup import BeautifulSoup
 from mylib import measure_time
 
 
-def getTermsListsFromXml(xml):
+def getTermsLists(xml):
     """
     xmlから <paragraph> タグの中身だけ取得
     """
@@ -39,37 +40,40 @@ def getTermsListsFromXml(xml):
 
 
 @measure_time
-def main(save_file = 'material_terms.txt'):
+def makedocs(dir_path='testdata/', save_name='docs.txt'):
     """
     一行毎に単語リストが書かれたファイルを準備
-    @save_file: 保存するファイル名
+    @dir_path:  読み込むディレクトリ先
+    @save_name: 保存するファイル名
     """
-    if  os.path.isfile( save_file ):
-        os.remove( save_file )
-    wfile = open ( save_file, 'a' )
+    if  os.path.isfile( save_name ):
+        os.remove( save_name )
+    wfile = open ( save_name, 'a' )
 
-    direc = "./testdata"
-    files = os.listdir(direc)
+    # ファイル名の一覧を取得
+    files = os.listdir( dir_path )
 
-    p = 1
-    for _file in files:
-        _file = os.path.join(direc, _file)
-        with open( _file, 'r') as f:
+    for p, filename in enumerate(files):
+        filename = os.path.join(dir_path, filename)
+        with open( filename, 'r') as f:
             xml = f.read()
-        for l in getTermsListsFromXml(xml):
-            if l == []: continue # 単語抽出出来なかった時は書き込まない
-            wfile.write(','.join(l).encode('utf_8') + '\n')
+        for tlist in getTermsLists(xml):
+            if tlist == []: continue # 単語抽出出来なかった時は書き込まない
+            wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
         print p
-        p += 1
     
     wfile.close()
 
 
 if __name__ == "__main__":
-    main()
+    argv = sys.argv
+    argc = len(argv)
 
-
-#------------------------テスト -----------------------------
-def test():
-    pass
+    if argc == 3:
+        # 読み込むディレクトリ先と、
+        # 保存時のファイル名を指定
+        makedocs(argv[1], argv[2])
+    else:
+        # デフォルトの指定で実行
+        makedocs()
