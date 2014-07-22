@@ -48,7 +48,7 @@ def main(save_file = 'material_terms.txt'):
         os.remove( save_file )
     wfile = open ( save_file, 'a' )
 
-    direc = "./msamples"
+    direc = "./testdata"
     files = os.listdir(direc)
 
     p = 1

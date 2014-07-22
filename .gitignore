@@ -1,8 +1,9 @@
-sandbox/*
-csamples/*
-msamples/*
+sandbox/
+archive/
+testdata/
 *.log
 *.dat
 *.txt
 *.pyc
+*.mat
 *~
