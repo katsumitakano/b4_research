@@ -8,7 +8,7 @@ from scipy import io, sparse
 from mylib import measure_time
 
 @measure_time
-def makeMatrix(src_doc='docs.txt'):
+def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
     """
     docs.txt からCoordinate形式の行列を作成する
     """
@@ -42,7 +42,7 @@ def makeMatrix(src_doc='docs.txt'):
         print i # 進捗確認
     
     decoded_relation = map(lambda t: t.decode('utf_8'), uniterms) # decodeしないとloadmatができない
-    io.savemat( 'matrix.mat', {'matrix':lil_matrix, 'relation':decoded_relation} )
+    io.savemat( save_name, {'matrix':lil_matrix, 'relation':decoded_relation} )
 
 
 if __name__ == "__main__":
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     argc = len(argv)
 
     # 行列生成に使うファイルを指定できる
-    if argc == 2:
-        makeMatrix( src_doc=argv[1] )
+    if argc == 3:
+        makeMatrix( load_name=argv[1], save_name=argv[2] )
     else:
         makeMatrix()
