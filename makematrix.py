@@ -17,7 +17,7 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
     dimention = 0    # 次元数（文脈数）
 
     # 単語の出現頻度を数える
-    for line in open( src_doc ):
+    for line in open( load_name ):
         listed_line = line.rstrip().split(',')
         for term in listed_line:
             ti_dict[term] = ti_dict.get(term, 0) + 1
@@ -25,7 +25,7 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
         dimention += 1
 
     # n個以上出現した単語だけを保持する
-    threshold = 10
+    threshold = 5 
     # item[0]: 単語
     # item[1]: 頻度
     uniterms = [item[0] for item in ti_dict.iteritems() \
@@ -34,7 +34,7 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
     # lil_matrix形式の疎行列を生成
     lil_matrix = sparse.lil_matrix( (len(uniterms), dimention) )
     for i, term in enumerate( uniterms ):
-        for j, line in enumerate( open(src_doc) ):
+        for j, line in enumerate( open(load_name) ):
             val = line.rstrip().split(',').count( term )
             if val:
                 lil_matrix[i,j] = float(val)
