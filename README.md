@@ -12,26 +12,40 @@
 * (deeplearning.py) - deeplearningを用いて単語間の類似度を測る
 
 * docs.txt          - 行列生成の元となるファイル
-* matrix.mat        - 行列ファイル
-* matrix_rel.txt    - 単語関連付けファイル 
+* matrix.mat        - 行列ファイル(単語辞書も付属)
+* cosine.txt	    - cosine.pyで生成された単語間の類似度ファイル
 
 * archive/      - 作成された行列ファイル置き場
 * testdata/     - プログラムの動きを確認するためのテストデータ
 * sandbox/      - 砂遊び
 
-## makedocs.py
+## makedocs.py [dir_path] [save_name}
 
-docs.txtを生成する
-以下のような形式のファイル
+BCCWJのM-XMLファイル群から行列生成の元となるファイルを作成する。
+通常は現在のディレクトリにdocs.txtを生成する。
+生成されるのは以下のような形式のファイルである。
+
 ```
 太郎,花子,一緒,駄菓子屋,寄る
 天気予報,明日,晴れ,予報
 これ,良い,壷
+経済,内閣総理大臣,する,発表
 ```
 
-## makematrix.py
+## makematrix.py [load_name] [save_name]
 
-matrix.matとmatrix_rel.txtを生成する
-matrix.matはバイナリファイル
-matrix_rel.txtはpickle化されたファイル
+文脈ファイルから行列ファイルを生成する。
+通常はdocs.txtからmatrix.txtを生成する
+行列ファイルは scipy.io.savemat を用いて保存され、
+行列 matrix と単語リスト relation を持つ
 
+## cosine.py [mat_name] [put_name]
+
+行列ファイルから単語間の類似度を羅列したファイルを生成する。
+通所はmatrix.matからcosine.txtを生成する。
+numpy/scipyを用いて、なるべく処理の高速化を図っている。
+
+## mylib.py
+
+自分のよく使う関数とかをここに溜め込む
+* measure_time: 関数の実行時間を測るデコレータ
