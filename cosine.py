@@ -37,7 +37,7 @@ def calcCosineSim( mat_name='matrix.mat', put_name='cosine.txt' ):
 
     for n in xrange(end):
         i, j = nonzero[0][n], nonzero[1][n]
-        if i == j: continue
+        if i >= j: continue
         numera = doted[i,j]
         denomi = sqrt(multi[i]*multi[j])
         sim = numera/denomi
