@@ -13,6 +13,7 @@ mkdir archive/${DIR_DATE}
 cp docs.txt archive/${DIR_DATE}
 cp matrix.mat archive/${DIR_DATE}
 cp cosine.txt archive/${DIR_DATE}
+cp load_mat.py archive/${DIR_DATE}
 
 
 # 以下のプログラムが追加されていく？
