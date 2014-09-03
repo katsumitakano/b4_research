@@ -1,13 +1,13 @@
 # coding: utf-8
 import numpy as np
-from scipy import io
+import scipy as sp
+from sklearn import manifold
 
-mat_file = io.loadmat('matrix.mat')
+mat_file = sp.io.loadmat('matrix.mat')
 matrix   = mat_file['matrix']
 relation = mat_file['relation']
 
-# lil = matrix.tolil()
-# for i in xrange(lil.shape[0]):
-#     print relation[i]
-#     print lil.rows(i)
-#     print lil.data(i)
+isomap = manifold.Isomap()
+lle = manifold.LocallyLinearEmbedding()
+
+# Y = isomap.fit_transform(matrix.toarray())
