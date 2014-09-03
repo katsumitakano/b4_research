@@ -3,6 +3,7 @@
 
 ## プログラム一覧
 
+### ソースコード
 * makedocs.py   - 行列生成の元となるファイルを生成
 * makematrix.py - 行列と単語関連付けファイルの生成
 * cosine.py     - コサイン類似度を用いて単語間の類似度を測る
@@ -10,11 +11,14 @@
 * (isomap.py)   - isomapを用いて単語間の類似度を測る
 * (lle.py)      - lleを用いて単語間の類似度を測る
 * (deeplearning.py) - deeplearningを用いて単語間の類似度を測る
+* load_mat.py       - iPythonで作業する準備用（%run load_mat.py）
 
+### 生成されるリソース
 * docs.txt          - 行列生成の元となるファイル
 * matrix.mat        - 行列ファイル(単語辞書も付属)
 * cosine.txt	    - cosine.pyで生成された単語間の類似度ファイル
 
+### ディレクトリ
 * archive/      - 作成された行列ファイル置き場
 * testdata/     - プログラムの動きを確認するためのテストデータ
 * sandbox/      - 砂遊び
@@ -35,7 +39,7 @@ BCCWJのM-XMLファイル群から行列生成の元となるファイルを作�
 ## makematrix.py [load_name] [save_name]
 
 文脈ファイルから行列ファイルを生成する。
-通常はdocs.txtからmatrix.txtを生成する
+通常はdocs.txtからmatrix.txtを生成する。
 行列ファイルは scipy.io.savemat を用いて保存され、
 行列 matrix と単語リスト relation を持つ
 
@@ -48,4 +52,4 @@ numpy/scipyを用いて、なるべく処理の高速化を図っている。
 ## mylib.py
 
 自分のよく使う関数とかをここに溜め込む
-* measure_time: 関数の実行時間を測るデコレータ
+* measure_time: 関数の実行時間を測るデコレータ（process.logに書き出し）
