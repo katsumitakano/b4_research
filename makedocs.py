@@ -39,6 +39,13 @@ def getTermsLists(xml):
     return rlist
 
 
+def getTermLists_BNC(xml):
+    """
+    BNCのxmlから単語を抽出
+    """
+    pass
+
+
 @measure_time
 def makedocs(dir_path='testdata/', save_name='docs.txt'):
     """
@@ -73,7 +80,7 @@ if __name__ == "__main__":
     if argc == 3:
         # 読み込むディレクトリ先と、
         # 保存時のファイル名を指定
-        makedocs(argv[1], argv[2])
+        makedocs(dir_path=argv[1], save_name=argv[2])
     else:
         # デフォルトの指定で実行
         makedocs()
