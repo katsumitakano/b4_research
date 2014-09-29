@@ -19,16 +19,17 @@ import sys
 import time
 import datetime
 from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulStoneSoup
 from mylib import measure_time
-
+from mylib import getFileList
 
 def getTermsLists(xml):
     """
     xmlから <paragraph> タグの中身だけ取得
     """
-    soup = BeautifulSoup(xml)
     rlist = []
     termlist = []
+    soup = BeautifulSoup(xml)
     for paragraph in soup.findAll('paragraph'):
         for luw in paragraph.findAll('luw'): # TODO: この辺高速化(lxml使う？)
             if re.match(u'名詞|動詞|形容詞', luw['l_pos']): # 名詞/動詞/形容詞の単語のみ抽出
@@ -39,11 +40,25 @@ def getTermsLists(xml):
     return rlist
 
 
-def getTermLists_BNC(xml):
+def getTermsLists_BNC(xml):
     """
     BNCのxmlから単語を抽出
     """
-    pass
+    rlist = []
+    termlist = []
+    soup = BeautifulStoneSoup(xml)
+    for paragraph in soup.findAll('p'):
+        if len(paragraph) < 10: continue
+        for word in paragraph.findAll('w'):
+            # 品詞名を取得
+            pos = word['pos'] 
+            if pos == 'VERB' or pos == 'SUBST': # VERB: 動詞, SUBST: 名詞
+                termlist.append( word['hw'] ) # 単語の原型を取得
+        rlist.append( termlist )
+        termlist = []
+
+    # あとで書く
+    return rlist
 
 
 @measure_time
@@ -58,17 +73,17 @@ def makedocs(dir_path='testdata/', save_name='docs.txt'):
     wfile = open ( save_name, 'a' )
 
     # ファイル名の一覧を取得
-    files = os.listdir( dir_path )
-
-    for p, filename in enumerate(files):
-        filename = os.path.join(dir_path, filename)
+    files = getFileList( dir_path )
+    
+    for filename in files:
         with open( filename, 'r') as f:
             xml = f.read()
+        #for tlist in getTermsLists_BNC(xml): #BNC用
         for tlist in getTermsLists(xml):
             if tlist == []: continue # 単語抽出出来なかった時は書き込まない
             wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
-        print p
+        print filename
     
     wfile.close()
 
@@ -77,6 +92,7 @@ if __name__ == "__main__":
     argv = sys.argv
     argc = len(argv)
 
+    # print getFileList(argv[1])
     if argc == 3:
         # 読み込むディレクトリ先と、
         # 保存時のファイル名を指定
