@@ -22,6 +22,16 @@ def measure_time(func):
     return wrapper
 
 
+# ディレクトリ配下の全ファイルへの絶対パスを,リスト形式で取得
+def getFileList(dir_path):
+    import os
+    fileList = []
+    for root, dirs, fnames in os.walk(dir_path):
+        for fname in fnames:
+            fileList.append( os.path.join(root, fname) )
+
+    return fileList
+
 @measure_time
 def test():
     for i in xrange(100000):
