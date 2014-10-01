@@ -31,12 +31,13 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
     threshold = 5 
     # item[0]: 単語
     # item[1]: 頻度
-    uniterms = [item[0] for item in df_dict.iteritems() \
+    terms = [item[0] for item in df_dict.iteritems() \
                         if  item[1] > threshold]
 
     # lil_matrix形式の疎行列を生成
-    lil_matrix = sparse.lil_matrix( (len(uniterms), dimention) )
-    for i, term in enumerate( uniterms ):
+    len_terms = len(terms)
+    lil_matrix = sparse.lil_matrix( (len_terms, dimention) )
+    for i, term in enumerate( terms ):
         for j, line in enumerate( open(load_name) ):
             counts = line.rstrip().split(',').count( term )
             if counts:
@@ -46,9 +47,9 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
                 idf = math.log( float(dimention)/df_dict[term] )
                 lil_matrix[i,j] = tf*idf
 
-        print i # 進捗確認
+        print "makematrix:%d/%d" % (i, len_terms) # 進捗確認
     
-    decoded_relation = map(lambda t: t.decode('utf_8'), uniterms) # decodeしないとloadmatができない
+    decoded_relation = map(lambda t: t.decode('utf_8'), terms) # decodeしないとloadmatができない
     io.savemat( save_name, {'matrix':lil_matrix, 'relation':decoded_relation} )
 
 

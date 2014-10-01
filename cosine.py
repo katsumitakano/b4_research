@@ -43,7 +43,7 @@ def calcCosineSim( mat_name='matrix.mat', put_name='cosine.txt' ):
         sim = numera/denomi
         wfile.write( "%f\t%s\t%s\n" % \
                          (sim, relation[i], relation[j]) )
-        print "%d/%d" % (n, end) # 進捗確認
+        print "cosine:%d/%d" % (n, end) # 進捗確認
 
 
 if __name__ == "__main__":
