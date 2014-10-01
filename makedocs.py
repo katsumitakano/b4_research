@@ -80,6 +80,7 @@ def makedocs(dir_path='testdata/', save_name='docs.txt'):
             xml = f.read()
         #for tlist in getTermsLists_BNC(xml): #BNC用
         for tlist in getTermsLists(xml):
+            if len(tlist) < 5: continue
             if tlist == []: continue # 単語抽出出来なかった時は書き込まない
             wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
