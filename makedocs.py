@@ -27,13 +27,15 @@ def getTermsLists(xml):
     """
     xmlから <paragraph> タグの中身だけ取得
     """
-    rlist = []
+    rlist = [] # returnするリスト
     termlist = []
-    soup = BeautifulSoup(xml)
+    soup = BeautifulStoneSoup(xml)
+    # 名詞/動詞/形容詞の単語のみ抽出
+    extraction = re.compile(u'名詞-(普通名詞|固有名詞)|動詞|形容詞')
     for paragraph in soup.findAll('paragraph'):
         for suw in paragraph.findAll('suw'): # TODO: この辺高速化(lxml使う？)
-            if re.match(u'名詞|動詞|形容詞', suw['pos']): # 名詞/動詞/形容詞の単語のみ抽出
-                termlist.append(suw['lemma'])
+            if extraction.match(suw['pos']):
+                termlist.append(suw['lemma']) # 原型を格納
         rlist.append( termlist )
         termlist = []
 
@@ -75,13 +77,13 @@ def makedocs(dir_path='testdata/', save_name='docs.txt'):
     # ファイル名の一覧を取得
     files = getFileList( dir_path )
     
+    threshold = 5 # 最低単語数
     for filename in files:
         with open( filename, 'r') as f:
             xml = f.read()
         #for tlist in getTermsLists_BNC(xml): #BNC用
         for tlist in getTermsLists(xml):
-            if len(tlist) < 5: continue
-            if tlist == []: continue # 単語抽出出来なかった時は書き込まない
+            if len(tlist) < threshold: continue # 抽出単語が少なすぎる場合は無視
             wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
         print filename
