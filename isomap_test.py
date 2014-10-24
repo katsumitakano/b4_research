@@ -37,7 +37,7 @@ def MDS(D, n_components):
     N = len(D)
     S = D*D # 距離の2乗
     H = np.eye(N) - np.ones((N,N))/N # 中心化行列
-    P = - 1.0/2 * H * S * H # ヤング・ハウスホルダー変換
+    P = - 0.5 * H * S * H # ヤング・ハウスホルダー変換
 
     # スペクトル分解
     eig_value, eig_vector = np.linalg.eig(P)
@@ -46,7 +46,8 @@ def MDS(D, n_components):
                    in enumerate(reversed(ind)) \
                    if i < n_components]
 
-    W = P.std(axis=0)[p] # 上位p個の固有値の標準偏差
+    # W = P.std(axis=0)[p] # 上位p個の固有値の標準偏差
+    W = eig_value[p]
     X = eig_vector[:,p]  # 上位p個の固有ベクトル
     
     return W*X
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     spmat = sparse.csr_matrix(data)
 
     ### 3次元プロット
-    plot3d(data[:,0], data[:,1], data[:,2], color=color)
+    # plot3d(data[:,0], data[:,1], data[:,2], color=color)
 
     # 近傍点の探索
     G_sparse = knn_graph(spmat, k)
@@ -85,6 +86,15 @@ if __name__ == "__main__":
     ### 2次元プロット
     plt.scatter(Y[:,0], Y[:,1], c=color)
     plt.show()
+
+    # scikit-learnでテスト
+    isomap = manifold.Isomap(n_neighbors=k,
+                             n_components=2,
+                             path_method='D')
+    _Y = isomap.fit_transform(data)
+    plt.scatter(_Y[:,0], _Y[:,1], c=color)
+    plt.show()
+
 
     # --- COMMENT ---
     # 一応うまくできたようである
