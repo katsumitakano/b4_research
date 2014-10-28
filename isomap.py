@@ -12,7 +12,7 @@ def loadmat():
     return (matfile['matrix'], \
             matfile['relation'])
 
-def knn_graph(spmat, k=4):
+def knn_graph(spmat, k):
     neigh = NearestNeighbors()
     neigh.fit(spmat)
     dists, indices = neigh.kneighbors(spmat, k+1, return_distance=True)
@@ -23,9 +23,7 @@ def knn_graph(spmat, k=4):
     N = len(indices) # 距離行列の大きさ
     G_sparse = sparse.lil_matrix( (N,N) )
     for i, J in enumerate(indices):
-        for j, index in enumerate(J):
-            # TODO: 分かりづらいし遅い
-            G_sparse[i,index] = dists[i,j]
+        G_sparse[i, J] = dists[i] # FancyIndex
 
     return G_sparse
 
@@ -36,20 +34,21 @@ def MDS(D, n_components):
     P = - 1.0/2 * H * S * H # ヤング・ハウスホルダー変換
 
     # スペクトル分解
-    eig_value, eig_vector = np.linalg.eig(P)
+    eig_value, eig_vector = np.linalg.eigh(P)
     ind = np.argsort(eig_value)
     p = [value for i, value \
                    in enumerate(reversed(ind)) \
                    if i < n_components]
 
-    W = P.std(axis=0)[p] # 上位p個の固有値の標準偏差
+    W = eig_value[p]
     X = eig_vector[:,p]  # 上位p個の固有ベクトル
     
-    return W*X
+    return np.sqrt(W)*X
 
 if __name__ == "__main__":
-    k = 4   # 近傍点の数
-    n = 100 # 圧縮後の次元数
+    k = 6   # 近傍点の数
+    d = 100 # 圧縮後の次元数
+    INFVAL = 10000 # 適当に大きい値
 
     # 疎行列データの読み込み
     spmat, terms = loadmat()
@@ -59,7 +58,8 @@ if __name__ == "__main__":
 
     # 測地線距離に基づく距離行列D_Gを作成
     D_G = csgraph.dijkstra(G_sparse, directed=False)
+    D_G[D_G == np.inf] = INFVAL # infを適当に巨大な値に変更
 
     # D_GをMDSで畳み込む
-    Y = MDS(D_G, n)
+    Y = MDS(D_G, d)
 
