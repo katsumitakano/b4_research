@@ -1,4 +1,5 @@
 # 研究用プログラム
+各ファイルの役割とか、簡単な使い方とかをまとめてあります。
 
 ## プログラム一覧
 
@@ -6,6 +7,8 @@
 * makedocs.py   - 行列生成の元となるファイルを生成
 * makematrix.py - 行列と単語関連付けファイルの生成
 * cosine.py     - コサイン類似度を用いて単語間の類似度を測る
+* isomap.py	    - isomapで次元圧縮した行列ファイルを生成
+* lle.py	    - LocallyLinearEmbeddingで次元圧縮した行列ファイルを生成
 * load_mat.py       - iPythonで作業する準備用（%run load_mat.py）
 
 ### 生成されるリソース
@@ -17,6 +20,10 @@
 * archive/      - 作成された行列ファイル置き場
 * testdata/     - プログラムの動きを確認するためのテストデータ
 * sandbox/      - 砂遊び
+
+### その他
+* isomap_test.py	- isomapのアルゴリズムを確認する
+* lle_test.py	- lleのアルゴリズムを確認する
 
 ## プログラムの詳細
 ### makedocs.py [dir_path] [save_name}
