@@ -1,4 +1,5 @@
 # coding: utf-8
+import sys
 import numpy as np
 import scipy as sp
 import scipy.io as spio
@@ -35,26 +36,28 @@ def solve_weights(spmat, neighs):
     """
     重み行列Wを返す
     @p spmat: 疎行列形式の行列
-    @p neighs各点に対応する近傍点の位置
+    @p neighs: 各点に対応する近傍点の位置
     @r NxNの重み行列
     """
     k = neighs.shape[1] # 近傍点の個数
-    D = spmat.shape[1] # 元の行列の次元数
-    N = spmat.shape[0]
-    W = sparse.lil_matrix( (N,N) ) # 重み行列の宣言
-    ones = np.ones(k) # 方程式の解
+    D = spmat.shape[1]  # 元の行列の次元数
+    N = spmat.shape[0]  # データ数
+    I = np.eye(k)       # 単位行列
+    ones = np.ones(k)   # 方程式の解
 
+    W = sparse.lil_matrix( (N,N) ) # 重み行列の宣言
     for i, neigh in enumerate(neighs):
         Z  = spmat[neigh].toarray()
         Xi = spmat[i].toarray()
         Z = Z-Xi
         C = np.dot(Z, Z.T) # 分散共分散行列の計算
-        # import pdb;pdb.set_trace()
-        if k>D:
-            # 正規化するためCに正規化定数を足す
-            I = np.eye( C.shape[0] )
-            eps = 0.001*C.trace()
-            C += I*eps
+        # 正規化するためCに正規化定数を足す
+        trace = C.trace()
+        if trace > 0:
+            eps = 0.001*trace
+        else:
+            eps = 0.001
+        C += I*eps
         w = sp.linalg.solve(C, ones, sym_pos=True)
         w = w/sum(w) # 割って正規化
         W[i, neigh] = w # 近傍点の解を格納
@@ -79,20 +82,52 @@ def embedding(spmat, W, d):
                                            maxiter=100)
     return eig_vector[:,1:]  # 底を除くd個の固有ベクトル
 
-
-if __name__ == "__main__":
-    k = 12   # 近傍点の数（8~20程度）
-    d = 100   # 圧縮後の次元数
-
-    # 疎行列データ読み込み
-    spmat, terms = loadmat()
-
+def LLE(spmat, k, d):
+    """
+    LLEの実行
+    @p spmat: 疎行列形式の行列
+    @p k: 近傍点の個数
+    @p d: 埋め込み後の次元数
+    """
     # 1.近傍点の取得
     neighs = find_neighbours(spmat, k)
-    
     # 2.重み行列の計算
     W = solve_weights(spmat, neighs)
-
     # 3.低次元へ埋め込み
     Y = embedding(spmat, W, d)
+    return Y
 
+def test(k, d):
+    """
+    テスト実行
+    """
+    from sklearn import datasets
+    import matplotlib.pyplot as plt
+    # スイスロールのデータ読み込み
+    swiss = datasets.make_swiss_roll(1000)
+    data  = swiss[0]
+    color = swiss[1]
+    spmat = sparse.csr_matrix(data)
+    # Isomap実行
+    Y = LLE(spmat, k, d)
+    # 2次元プロット
+    plt.scatter(Y[:,0], Y[:,1], c=color)
+    plt.show()
+
+if __name__ == "__main__":
+    argv = sys.argv
+    argc = len(argv)
+
+    if argc != 3 and argc != 4:
+        print "Usage: lle.py 近傍数 圧縮後の次元 [test]"
+        sys.exit()
+
+    k = int(argv[1])   # 近傍点の数（8~20程度）
+    d = int(argv[2])   # 圧縮後の次元数
+
+    if argc == 3:   # 通常時
+        spmat, terms = loadmat()
+        Y = LLE(spmat, k, d)
+        print Y
+    elif argc == 4: # テスト実行
+        test(k, d)
