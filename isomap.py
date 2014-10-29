@@ -1,5 +1,6 @@
 # coding: utf-8
 import sys
+import string
 import numpy as np
 import scipy as sp
 import scipy.io as spio
@@ -48,8 +49,11 @@ def MDS(D, d):
     H = np.eye(N) - np.ones((N,N))/N # 中心化行列
     P = - 1.0/2 * H * S * H # ヤング・ハウスホルダー変換
 
-    # スペクトル分解
+    # 固有値計算
+    print "Start Eigen Computation"
     eig_value, eig_vector = np.linalg.eigh(P)
+    print "End Eigen Computation"
+
     ind = np.argsort(eig_value)
     p = [value for i, value \
                    in enumerate(reversed(ind)) \
@@ -70,18 +74,22 @@ def Isomap(spmat, k, d):
     INFVAL = 10000 # 適当に大きい値(np.infと交換)
 
     # 近傍点の探索
+    print "making knn_graph"
     G_sparse = knn_graph(spmat, k)
 
     # 測地線距離に基づく距離行列D_Gを作成
+    print "compute distance matrix"
     D_G = csgraph.dijkstra(G_sparse, directed=False)
     D_G[D_G == np.inf] = INFVAL # infを適当に巨大な値に変更
 
     # D_GをMDSで畳み込む
+    print "embedding with MDS..."
     Y = MDS(D_G, d)
 
     ### mds = manifold.MDS(n_components=d, dissimilarity="precomputed")
     ### Y = mds.fit_transform(D_G)
 
+    print "OK!"
     return Y
 
 def test(k, d):
@@ -116,7 +124,8 @@ if __name__ == "__main__":
     if argc == 3:   # 通常時
         spmat, terms = loadmat()
         Y = Isomap(spmat, k, d)
-        print Y
+        save_name = "isomap_k%d_d%d.mat" % (k, d)
+        spio.savemat(save_name, {'Y':Y, 'terms':terms})
     elif argc == 4: # テスト実行
         test(k, d)
 

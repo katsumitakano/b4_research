@@ -76,10 +76,13 @@ def embedding(spmat, W, d):
     I = sparse.eye(N)
     M = sp.dot( (I-W).T, (I-W) )
 
-    # sigmaがめちゃ大事らしい
+    # 固有値計算（sigmaがめちゃ大事らしい）
+    print "Start Eigen Computation"
     eig_value, eig_vector = splinalg.eigsh(M, d+1,\
                                            sigma=0.0,\
                                            maxiter=100)
+    print "End Eigen Computation"
+
     return eig_vector[:,1:]  # 底を除くd個の固有ベクトル
 
 def LLE(spmat, k, d):
@@ -90,11 +93,15 @@ def LLE(spmat, k, d):
     @p d: 埋め込み後の次元数
     """
     # 1.近傍点の取得
+    print "find_neighbours"
     neighs = find_neighbours(spmat, k)
     # 2.重み行列の計算
+    print "solve_weights"
     W = solve_weights(spmat, neighs)
     # 3.低次元へ埋め込み
+    print "embedding..."
     Y = embedding(spmat, W, d)
+    print "OK!"
     return Y
 
 def test(k, d):
@@ -128,6 +135,7 @@ if __name__ == "__main__":
     if argc == 3:   # 通常時
         spmat, terms = loadmat()
         Y = LLE(spmat, k, d)
-        print Y
+        save_name = "lle_k%d_d%d.mat" % (k, d)
+        spio.savemat(save_name, {'Y':Y, 'terms':terms})
     elif argc == 4: # テスト実行
         test(k, d)
