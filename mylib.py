@@ -32,6 +32,24 @@ def getFileList(dir_path):
 
     return fileList
 
+
+# 3次元プロット
+def plot3d(xs, ys, zs, c="b"):
+    import matplotlib.pyplot as plt
+    from mpl_toolkits import axes3d
+    fig = plt.figure()
+    ax = axes3d
+    ax.scatter3D(xs, ys, zs, color=c)
+    plt.show()
+
+
+# 2次元プロット
+def plot2d(xs, ys, c=u'b', m=u'o'):
+    import matplotlib.pyplot as plt
+    plt.scatter(xs, ys, c=c, marker=m)
+    plt.show()
+
+
 @measure_time
 def test():
     for i in xrange(100000):
