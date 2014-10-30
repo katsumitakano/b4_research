@@ -66,9 +66,9 @@ def MDS(D, d):
     P = - 1.0/2 * H * S * H # ヤング・ハウスホルダー変換
 
     # 固有値計算
-    print "Start Eigen Computation"
+    sys.stderr.write("Start Eigen Computation\n")
     eig_value, eig_vector = np.linalg.eigh(P)
-    print "End Eigen Computation"
+    sys.stderr.write("End Eigen Computation\n")
 
     ind = np.argsort(eig_value)
     p = [value for i, value \
@@ -90,22 +90,22 @@ def Isomap(spmat, k, d, test=False):
     INFVAL = 10000 # 適当に大きい値(np.infと交換)
 
     # 近傍点の探索
-    print "making knn_graph"
+    sys.stderr.write("making knn_graph\n")
     G_sparse = knn_graph(spmat, k, test)
 
     # 測地線距離に基づく距離行列D_Gを作成
-    print "compute distance matrix"
+    sys.stderr.write("compute distance matrix\n")
     D_G = csgraph.dijkstra(G_sparse, directed=False)
     D_G[D_G == np.inf] = INFVAL # infを適当に巨大な値に変更
 
     # D_GをMDSで畳み込む
-    print "embedding with MDS..."
+    sys.stderr.write("embedding with MDS...\n")
     Y = MDS(D_G, d)
 
     ### mds = manifold.MDS(n_components=d, dissimilarity="precomputed")
     ### Y = mds.fit_transform(D_G)
 
-    print "OK!"
+    sys.stderr.write("OK!\n")
     return Y
 
 def test(k, d):
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     argc = len(argv)
 
     if argc != 3 and argc != 4:
-        print "Usage: isomap.py 近傍数 圧縮後の次元 [test]"
+        sys.stderr.write("Usage: isomap.py 近傍数 圧縮後の次元 [test]\n")
         sys.exit()
 
     k = int(argv[1]) # 近傍点の数

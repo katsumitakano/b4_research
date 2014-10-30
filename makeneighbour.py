@@ -5,6 +5,7 @@ import numpy as np
 import scipy as sp
 from scipy import io as spio
 from sklearn.neighbors import NearestNeighbors
+from mylib import measure_time
 
 if __name__ == "__main__":
     mat_file = spio.loadmat('matrix.mat')
