@@ -10,7 +10,7 @@ from scipy import io, sparse
 from mylib import measure_time
 
 @measure_time
-def calcCosineSim( mat_name='matrix.mat', put_name='cosine.txt' ):
+def calcCosineSim( mat_name='matrix.mat', put_name='cosine.dat' ):
     '''
     行列からCosine類似度を計算し、単語間の類似度をFileに出力する
 

@@ -4,26 +4,25 @@
 ## プログラム一覧
 
 ### ソースコード
-* makedocs.py   - 行列生成の元となるファイルを生成
-* makematrix.py - 行列と単語関連付けファイルの生成
+* makedocs.py	- 行列生成の元となるファイルを生成
+* makematrix.py	- 行列と単語関連付けファイルの生成
+* makeneighbour.py	- 近傍点を格納したファイルを生成
 * cosine.py     - コサイン類似度を用いて単語間の類似度を測る
-* isomap.py	    - isomapで次元圧縮した行列ファイルを生成
-* lle.py	    - LocallyLinearEmbeddingで次元圧縮した行列ファイルを生成
-* load_mat.py       - iPythonで作業する準備用（%run load_mat.py）
+* isomap.py	- isomapで次元圧縮した行列ファイルを生成
+* lle.py	- LocallyLinearEmbeddingで次元圧縮した行列ファイルを生成
+* load_mat.py	- iPythonで作業する準備用（%run load_mat.py）
 
 ### 生成されるリソース
-* docs.txt          - 行列生成の元となるファイル
-* matrix.mat        - 行列ファイル(単語辞書も付属)
-* cosine.txt	    - cosine.pyで生成された単語間の類似度ファイル
+* docs.txt	- 行列生成の元となるファイル
+* matrix.mat	- 行列ファイル(単語辞書も付属)
+* neighbours.dat  - makeneighbour.pyで生成された近傍点のファイル
+* cosine.dat	  - cosine.pyで生成された単語間の類似度ファイル
 
 ### ディレクトリ
-* archive/      - 作成された行列ファイル置き場
-* testdata/     - プログラムの動きを確認するためのテストデータ
-* sandbox/      - 砂遊び
+* archive/	- 作成された行列ファイル置き場
+* testdata/	- プログラムの動きを確認するためのテストデータ
+* sandbox/	- 砂遊び
 
-### その他
-* isomap_test.py	- isomapのアルゴリズムを確認する
-* lle_test.py	- lleのアルゴリズムを確認する
 
 ## プログラムの詳細
 ### makedocs.py [dir_path] [save_name}
@@ -46,11 +45,25 @@ BCCWJのM-XMLファイル群から行列生成の元となるファイルを作�
 行列ファイルは scipy.io.savemat を用いて保存され、
 行列 matrix と単語リスト relation を持つ
 
+### makeneighbour.py
+
+近傍点ファイルを作るよ。
+
 ### cosine.py [mat_name] [put_name]
 
 行列ファイルから単語間の類似度を羅列したファイルを生成する。
 通所はmatrix.matからcosine.txtを生成する。
 numpy/scipyを用いて、なるべく処理の高速化を図っている。
+
+### isomap.py k=近傍点 d=圧縮後の次元 [test]
+
+圧縮後のmatファイルをisomap_k{}_d{}.matに書き出す。
+testを指定すると動きを確認できる。
+
+### lle.py k=近傍点 d=圧縮後の次元 [test]
+
+圧縮後のmatファイルをlle_k{}_d{}.matに書き出す
+testを指定すると動きを確認できる。
 
 ### mylib.py
 
