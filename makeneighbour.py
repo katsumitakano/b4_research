@@ -29,7 +29,7 @@ if __name__ == "__main__":
         # 書き込み用に整形
         write_list = []
         for ind, dist in zip(indices.ravel(), dists.ravel()):
-            write_list.append("%d:%.4f" % (ind, dist))
+            write_list.append("%d:%.20g" % (ind, dist)) # 精度は適当…
         # 書き込み
         wfile.write( ' '.join(write_list)+'\n' )
         sys.stderr.write("makeneighbour:%d\n" % (i)) # 進捗確認
