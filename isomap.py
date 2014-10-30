@@ -17,24 +17,40 @@ def loadmat():
     return (matfile['matrix'], \
             matfile['relation'])
 
-def knn_graph(spmat, k):
+def knn_graph(spmat, k, test=False):
     """
     疎な近傍グラフを作成する
     @p spmat: 疎行列形式の行列
     @p k: 近傍点の個数
     @r 疎行列形式の近傍グラフ
     """
-    neigh = NearestNeighbors()
-    neigh.fit(spmat)
-    dists, indices = neigh.kneighbors(spmat, k+1, return_distance=True)
-    dists   = dists[:,1:]   # 1列目は自分との距離なので使わない
-    indices = indices[:,1:] # 同上
-
-    # 近傍探索グラフの作成
-    N = len(indices) # 距離行列の大きさ
+    N = spmat.shape[0] # 距離行列の大きさ
     G_sparse = sparse.lil_matrix( (N,N) )
-    for i, J in enumerate(indices):
-        G_sparse[i, J] = dists[i] # FancyIndex
+
+    if test:
+        # --- テスト時はneighborsをそのまま使う
+        neigh = NearestNeighbors()
+        neigh.fit(spmat)
+        dists, indices = neigh.kneighbors(spmat, k+1, return_distance=True)
+        dists   = dists[:,1:]   # 1列目は自分との距離なので使わない
+        indices = indices[:,1:] # 同上
+
+        # 近傍探索グラフの作成
+        for i, J in enumerate(indices):
+            G_sparse[i, J] = dists[i] # FancyIndex
+    else:
+        # --- 本番時はファイルから読み込む        
+        neighs = np.loadtxt('neighbours.dat', delimiter=" ", dtype="S")
+        neighs = neighs[:,1:k+1]
+
+        # 近傍探索グラフの作成
+        for i, neigh in enumerate(neighs):
+            for idx_dist in neigh:
+                idx, dist = idx_dist.split(":")
+                idx  = int(idx)
+                dist = float(dist)
+                G_sparse[i, idx] = dist
+            sys.stderr.write("knn_graph:%d\n" % (i))
 
     return G_sparse
 
@@ -64,7 +80,7 @@ def MDS(D, d):
     
     return np.sqrt(W)*X
 
-def Isomap(spmat, k, d):
+def Isomap(spmat, k, d, test=False):
     """
     Isomapの実行
     @p spmat: 疎行列形式の行列
@@ -75,7 +91,7 @@ def Isomap(spmat, k, d):
 
     # 近傍点の探索
     print "making knn_graph"
-    G_sparse = knn_graph(spmat, k)
+    G_sparse = knn_graph(spmat, k, test)
 
     # 測地線距離に基づく距離行列D_Gを作成
     print "compute distance matrix"
@@ -104,7 +120,7 @@ def test(k, d):
     color = swiss[1]
     spmat = sparse.csr_matrix(data)
     # Isomap実行
-    Y = Isomap(spmat, k, d)
+    Y = Isomap(spmat, k, d, test=True)
     # 2次元プロット
     plt.scatter(Y[:,0], Y[:,1], c=color)
     plt.show()
@@ -123,7 +139,7 @@ if __name__ == "__main__":
 
     if argc == 3:   # 通常時
         spmat, terms = loadmat()
-        Y = Isomap(spmat, k, d)
+        Y = Isomap(spmat, k, d, test=False)
         save_name = "isomap_k%d_d%d.mat" % (k, d)
         spio.savemat(save_name, {'Y':Y, 'terms':terms})
     elif argc == 4: # テスト実行
