@@ -81,6 +81,7 @@ def solve_weights(spmat, neighs):
         w = sp.linalg.solve(C, ones, sym_pos=True)
         w = w/sum(w) # 割って正規化
         W[i, neigh] = w # 近傍点の解を格納
+        sys.stderr.write("solve_weights:%d\n" % (i))
 
     return W.tocsr()
 
