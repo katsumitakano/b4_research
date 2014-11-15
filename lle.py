@@ -18,17 +18,34 @@ def loadmat():
     return (matfile['matrix'], \
             matfile['relation'])
 
-def find_neighbours(spmat, k):
+def find_neighbours(spmat, k, test=False):
     """
     近傍点を探索し、その位置を返す
     @p spmat: 疎行列形式の行列
     @p k: 近傍点の個数
     @r 各点に対応する近傍点の位置
     """
-    neigh = NearestNeighbors()
-    neigh.fit(spmat)
-    indices = neigh.kneighbors(spmat, k+1, return_distance=False)
-    indices = indices[:,1:] # 1列目は自分との距離なので使わない
+    N = spmat.shape[0] # データ数
+
+    if test:
+        # --- テスト時はneighborsをそのまま使う
+        neigh = NearestNeighbors()
+        neigh.fit(spmat)
+        indices = neigh.kneighbors(spmat, k+1, return_distance=False)
+        indices = indices[:,1:] # 1列目は自分との距離なので使わない
+    else:
+        # --- 本番時はファイルから読み込む        
+        neighs = np.loadtxt('neighbours.dat', delimiter=" ", dtype="S")
+        neighs = neighs[:,1:k+1]
+        indices = np.empty(neighs.shape, dtype=np.int)
+
+        # 近傍探索グラフの作成
+        for i, neigh in enumerate(neighs):
+            for j, idx_dist in enumerate(neigh):
+                idx, dist = idx_dist.split(":")
+                idx  = int(idx)
+                indices[i, j] = idx
+            sys.stderr.write("knn_graph:%d\n" % (i))
 
     return indices
 
@@ -77,31 +94,32 @@ def embedding(spmat, W, d):
     M = sp.dot( (I-W).T, (I-W) )
 
     # 固有値計算（sigmaがめちゃ大事らしい）
-    print "Start Eigen Computation"
+    sys.stderr.write("Start Eigen Computation\n")
     eig_value, eig_vector = splinalg.eigsh(M, d+1,\
                                            sigma=0.0,\
                                            maxiter=100)
-    print "End Eigen Computation"
+    sys.stderr.write("End Eigen Computation\n")
 
     return eig_vector[:,1:]  # 底を除くd個の固有ベクトル
 
-def LLE(spmat, k, d):
+def LLE(spmat, k, d, test=False):
     """
     LLEの実行
     @p spmat: 疎行列形式の行列
     @p k: 近傍点の個数
     @p d: 埋め込み後の次元数
+    @p test: Trueの時swiss_rollを読み込む
     """
     # 1.近傍点の取得
-    print "find_neighbours"
-    neighs = find_neighbours(spmat, k)
+    sys.stderr.write("find_neighbours\n")
+    neighs = find_neighbours(spmat, k, test)
     # 2.重み行列の計算
-    print "solve_weights"
+    sys.stderr.write("solve_weights\n")
     W = solve_weights(spmat, neighs)
     # 3.低次元へ埋め込み
-    print "embedding..."
+    sys.stderr.write("embedding...\n")
     Y = embedding(spmat, W, d)
-    print "OK!"
+    sys.stderr.write("OK!\n")
     return Y
 
 def test(k, d):
@@ -116,7 +134,7 @@ def test(k, d):
     color = swiss[1]
     spmat = sparse.csr_matrix(data)
     # Isomap実行
-    Y = LLE(spmat, k, d)
+    Y = LLE(spmat, k, d, test=True)
     # 2次元プロット
     plt.scatter(Y[:,0], Y[:,1], c=color)
     plt.show()
@@ -126,7 +144,7 @@ if __name__ == "__main__":
     argc = len(argv)
 
     if argc != 3 and argc != 4:
-        print "Usage: lle.py 近傍数 圧縮後の次元 [test]"
+        sys.stderr.write("Usage: lle.py 近傍数 圧縮後の次元 [test]\n")
         sys.exit()
 
     k = int(argv[1])   # 近傍点の数（8~20程度）
@@ -134,7 +152,7 @@ if __name__ == "__main__":
 
     if argc == 3:   # 通常時
         spmat, terms = loadmat()
-        Y = LLE(spmat, k, d)
+        Y = LLE(spmat, k, d, test=False)
         save_name = "lle_k%d_d%d.mat" % (k, d)
         spio.savemat(save_name, {'Y':Y, 'terms':terms})
     elif argc == 4: # テスト実行

@@ -86,6 +86,7 @@ def Isomap(spmat, k, d, test=False):
     @p spmat: 疎行列形式の行列
     @p k: 近傍点の個数
     @p d: 埋め込み後の次元数
+    @p test: Trueの時swiss_rollを読み込む
     """
     INFVAL = 10000 # 適当に大きい値(np.infと交換)
 
@@ -102,8 +103,8 @@ def Isomap(spmat, k, d, test=False):
     sys.stderr.write("embedding with MDS...\n")
     Y = MDS(D_G, d)
 
-    ### mds = manifold.MDS(n_components=d, dissimilarity="precomputed")
-    ### Y = mds.fit_transform(D_G)
+    #mds = manifold.MDS(n_components=d, dissimilarity="precomputed")
+    #Y = mds.fit_transform(D_G)
 
     sys.stderr.write("OK!\n")
     return Y
