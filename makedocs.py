@@ -1,9 +1,10 @@
 # coding: utf-8
 
-# 『msamples』フォルダ内のファイル群から、
+# 『testdata』フォルダ内のファイル群から、
 # 行列生成に使うファイルを作成する。
-# ファイル形式： 単語リストが1行ずつに書かれている
+# 引数で読み込み先ディレクトリを変更することも可能。
 #
+# ファイル形式： 単語リストが1行ずつに書かれている
 # ----------------------------------------
 # 太郎,花子,一緒,駄菓子屋,寄る
 # 天気予報,明日,晴れ,予報
@@ -16,8 +17,6 @@
 import re
 import os
 import sys
-import time
-import datetime
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import BeautifulStoneSoup
 from mylib import measure_time
@@ -59,7 +58,6 @@ def getTermsLists_BNC(xml):
         rlist.append( termlist )
         termlist = []
 
-    # あとで書く
     return rlist
 
 

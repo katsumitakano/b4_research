@@ -17,9 +17,10 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
     
     # df_dict: Document Frequency Dictionaly
     df_dict   = {}   # 文脈頻度の辞書
+    threshold = 5    # 最低出現単語数(n回以上出現した単語のみ保持)
     N = 0    # 単語数
     M = 0    # 文脈数
-
+    
     # 各単語の文脈での出現頻度を数える
     for line in open( load_name ):
         listed_line = line.rstrip().split(',')
@@ -29,8 +30,6 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
         # 文脈数を数え上げる
         M += 1
 
-    # n個以上の文脈に出現した単語だけを保持する
-    threshold = 5 
     # item[0]: 単語
     # item[1]: 頻度
     terms = [item[0] for item in df_dict.iteritems() \
@@ -56,14 +55,14 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
         print "makematrix:%d/%d" % (i, N) # 進捗確認
     
     # mat形式で保存 (decodeしないとloadmatができない)
-    decoded_relation = map(lambda t: t.decode('utf_8'), terms)
-    io.savemat( save_name, {'matrix':lil_matrix, 'relation':decoded_relation} )
+    decoded_terms = map(lambda t: t.decode('utf_8'), terms)
+    io.savemat( save_name, {'matrix':lil_matrix, 'terms':decoded_terms} )
 
     # 全単語をファイルに書き出しておく
     with codecs.open("terms.txt", 'w', "utf-8") as f:
         # 改行文字を付与
-        decoded_relation = [term + "\n" for term in decoded_relation]
-        f.writelines(decoded_relation)
+        decoded_terms = [term + "\n" for term in decoded_terms]
+        f.writelines(decoded_terms)
 
 
 if __name__ == "__main__":

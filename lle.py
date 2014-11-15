@@ -9,6 +9,7 @@ from scipy.sparse import csgraph
 from sklearn import manifold
 from sklearn import datasets
 from sklearn.neighbors import NearestNeighbors
+from mylib import measure_time
 
 def loadmat():
     """
@@ -16,8 +17,9 @@ def loadmat():
     """
     matfile = spio.loadmat('matrix.mat')
     return (matfile['matrix'], \
-            matfile['relation'])
+            matfile['terms'])
 
+@measure_time
 def find_neighbours(spmat, k, test=False):
     """
     近傍点を探索し、その位置を返す
@@ -49,6 +51,7 @@ def find_neighbours(spmat, k, test=False):
 
     return indices
 
+@measure_time
 def solve_weights(spmat, neighs):
     """
     重み行列Wを返す
@@ -81,6 +84,7 @@ def solve_weights(spmat, neighs):
 
     return W.tocsr()
 
+@measure_time
 def embedding(spmat, W, d):
     """
     元の行列を低次元に埋め込む

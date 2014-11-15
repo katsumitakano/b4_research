@@ -8,6 +8,7 @@ from scipy import sparse
 from scipy.sparse import csgraph
 from sklearn import manifold
 from sklearn.neighbors import NearestNeighbors
+from mylib import measure_time
 
 def loadmat():
     """
@@ -15,8 +16,9 @@ def loadmat():
     """
     matfile = spio.loadmat('matrix.mat')
     return (matfile['matrix'], \
-            matfile['relation'])
+            matfile['terms'])
 
+@measure_time
 def knn_graph(spmat, k, test=False):
     """
     疎な近傍グラフを作成する
@@ -54,6 +56,7 @@ def knn_graph(spmat, k, test=False):
 
     return G_sparse
 
+@measure_time
 def MDS(D, d):
     """
     MDSにより距離行列を低次元に埋め込む

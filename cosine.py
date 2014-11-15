@@ -19,7 +19,7 @@ def calcCosineSim( mat_name='matrix.mat', put_name='cosine.dat' ):
     '''
     loaded_mat = io.loadmat( mat_name )
     csc_mat  = loaded_mat['matrix']
-    relation = loaded_mat['relation']
+    relation = loaded_mat['terms']
 
     # 書き込みファイルの準備
     if  os.path.isfile( put_name ):
