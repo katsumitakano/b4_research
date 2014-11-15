@@ -4,6 +4,7 @@
 import os
 import sys
 import math
+import codecs
 import numpy as np
 from scipy import io, sparse
 from mylib import measure_time
@@ -54,8 +55,15 @@ def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
 
         print "makematrix:%d/%d" % (i, N) # 進捗確認
     
-    decoded_relation = map(lambda t: t.decode('utf_8'), terms) # decodeしないとloadmatができない
+    # mat形式で保存 (decodeしないとloadmatができない)
+    decoded_relation = map(lambda t: t.decode('utf_8'), terms)
     io.savemat( save_name, {'matrix':lil_matrix, 'relation':decoded_relation} )
+
+    # 全単語をファイルに書き出しておく
+    with codecs.open("terms.txt", 'w', "utf-8") as f:
+        # 改行文字を付与
+        decoded_relation = [term + "\n" for term in decoded_relation]
+        f.writelines(decoded_relation)
 
 
 if __name__ == "__main__":
