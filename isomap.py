@@ -1,6 +1,5 @@
 # coding: utf-8
 import sys
-import string
 import numpy as np
 import scipy as sp
 import scipy.io as spio
