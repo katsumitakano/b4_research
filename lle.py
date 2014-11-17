@@ -98,15 +98,15 @@ def embedding(spmat, W, d):
     N = W.shape[0]
     I = sparse.eye(N)
     M = sp.dot( (I-W).T, (I-W) )
+    M = M.toarray()
+    np.save("M_lle", M) # 行列保存
 
-    # 固有値計算（sigmaがめちゃ大事らしい）
+    # 固有値計算
     sys.stderr.write("Start Eigen Computation\n")
-    eig_value, eig_vector = splinalg.eigsh(M, d+1,\
-                                           sigma=0.0,\
-                                           maxiter=100)
+    eig_value, eig_vector = np.linalg.eigh(M)
     sys.stderr.write("End Eigen Computation\n")
 
-    return eig_vector[:,1:]  # 底を除くd個の固有ベクトル
+    return eig_vector[:,1:d+1]  # 底を除くd個の固有ベクトル
 
 def LLE(spmat, k, d, test=False):
     """
