@@ -5,5 +5,10 @@ testdata/
 *.dat
 *.txt
 *.pyc
+*.npy
 *.mat
+*.eval
+*.evec
 *~
+denseEigSolver
+sparseEigSolver
