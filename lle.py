@@ -4,8 +4,6 @@ import numpy as np
 import scipy as sp
 import scipy.io as spio
 from scipy import sparse
-from scipy.sparse import linalg as splinalg
-from scipy.sparse import csgraph
 from sklearn import manifold
 from sklearn import datasets
 from sklearn.neighbors import NearestNeighbors
@@ -97,8 +95,8 @@ def embedding(spmat, W, d):
     """
     N = W.shape[0]
     I = sparse.eye(N)
-    M = sp.dot( (I-W).T, (I-W) )
-    M = M.toarray()
+    IW = I-W
+    M = sp.dot( IW.T, IW ).toarray() # TODO: dotが遅い
     np.save("M_lle", M) # 行列保存
 
     # 固有値計算
@@ -106,7 +104,10 @@ def embedding(spmat, W, d):
     eig_value, eig_vector = np.linalg.eigh(M)
     sys.stderr.write("End Eigen Computation\n")
 
-    return eig_vector[:,1:d+1]  # 底を除くd個の固有ベクトル
+    ind = np.argsort(eig_value) # 固有値の小さい順にソート
+    p = ind[1:d+1]              # 底を除くd個のインデックス
+
+    return eig_vector[:,p]  # 底を除くd個の固有ベクトル
 
 def LLE(spmat, k, d, test=False):
     """
