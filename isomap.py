@@ -65,7 +65,7 @@ def MDS(D, d):
     N = len(D)
     S = D*D # 距離の2乗
     H = np.eye(N) - np.ones((N,N))/N # 中心化行列
-    P = - 1.0/2 * H * S * H # ヤング・ハウスホルダー変換
+    P = -0.5 * H.dot(S).dot(H) # ヤング・ハウスホルダー変換(-1/2*H*S*H)
     np.save("P_isomap", P) # 行列保存
 
     # 固有値計算
@@ -73,13 +73,11 @@ def MDS(D, d):
     eig_value, eig_vector = np.linalg.eigh(P)
     sys.stderr.write("End Eigen Computation\n")
 
-    ind = np.argsort(eig_value)
-    p = [value for i, value \
-                   in enumerate(reversed(ind)) \
-                   if i < d]
+    ind = np.argsort(eig_value)[::-1] # 固有値の大きい順にソート
+    p = ind[:d]
 
-    W = eig_value[p]
-    X = eig_vector[:,p]  # 上位p個の固有ベクトル
+    W = eig_value[p]    # 上位p個の固有値
+    X = eig_vector[:,p] # 上位p個の固有ベクトル
     
     return np.sqrt(W)*X
 
@@ -106,7 +104,9 @@ def Isomap(spmat, k, d, test=False):
     sys.stderr.write("embedding with MDS...\n")
     Y = MDS(D_G, d)
 
-    #mds = manifold.MDS(n_components=d, dissimilarity="precomputed")
+    # scikit-learnの多次元尺度構成法
+    # n_jobs: 並列化の数（-1で全てのCPU）
+    #mds = manifold.MDS(n_components=d, n_jobs=-1, dissimilarity="precomputed")
     #Y = mds.fit_transform(D_G)
 
     sys.stderr.write("OK!\n")
