@@ -1,5 +1,6 @@
 sandbox/
 archive/
+eval_data/
 testdata/
 *.log
 *.dat
