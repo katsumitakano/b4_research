@@ -49,8 +49,8 @@ while(1):
         # 入力が無い場合はそのまま続ける
         continue
 
-    elif input_list[0] == "quit":
-        # quitが入力されたら終了
+    elif input_list[0] in ["quit", "exit"]:
+        # quit か exit が入力されたら終了
         print "Good Bye"
         sys.exit()
 
@@ -74,7 +74,6 @@ while(1):
         except ValueError:
             print("No such term: %s" % (input_list[1]))
             continue
-
         print sim_cosine(matrix[ind1], matrix[ind2])
 
     else:
