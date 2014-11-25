@@ -22,7 +22,7 @@ from BeautifulSoup import BeautifulStoneSoup
 from mylib import measure_time
 from mylib import getFileList
 
-def getTermsLists(xml):
+def getTermsLists_MXML(xml):
     """
     xmlから <paragraph> タグの中身だけ取得
     """
@@ -60,6 +60,29 @@ def getTermsLists_BNC(xml):
 
     return rlist
 
+def getTermsLists_Mainichi(xml):
+    """
+    Mainichiのxmlから単語を抽出
+    """
+    rlist = []
+    termlist = []
+    soup = BeautifulStoneSoup(xml)
+    for sentence in soup.findAll('sentence'): # sentenceが段落に対応
+        for tok in sentence.findAll('tok'):
+            features = tok['feature'].split(',')
+            hinshi  = features[0]
+            bunrui1 = features[1]
+            genkei  = features[6]
+            if (hinshi in [u'名詞', u'動詞', u'形容詞']) and \ 
+                    (bunrui1 not in[u'数', u'非自立']): # ←指定した細分類は除く
+                if genkei != u"*":
+                    termlist.append( genkei ) # 原型が存在すれば、それを抽出
+                else:
+                    termlist.append( tok.text ) # 無ければ表層系を使う
+        rlist.append( termlist )
+        termlist = []
+
+    return rlist
 
 @measure_time
 def makedocs(dir_path='testdata/', save_name='docs.txt'):
@@ -80,7 +103,8 @@ def makedocs(dir_path='testdata/', save_name='docs.txt'):
         with open( filename, 'r') as f:
             xml = f.read()
         #for tlist in getTermsLists_BNC(xml): #BNC用
-        for tlist in getTermsLists(xml):
+        #for tlist in getTermsLists_MXML(xml): #BCCWJ用
+        for tlist in getTermsLists_Mainichi(xml): #毎日新聞用
             if len(tlist) < threshold: continue # 抽出単語が少なすぎる場合は無視
             wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
