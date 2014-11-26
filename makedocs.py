@@ -73,8 +73,7 @@ def getTermsLists_Mainichi(xml):
             hinshi  = features[0]
             bunrui1 = features[1]
             genkei  = features[6]
-            if (hinshi in [u'名詞', u'動詞', u'形容詞']) and \ 
-                    (bunrui1 not in[u'数', u'非自立']): # ←指定した細分類は除く
+            if (hinshi in [u'名詞', u'動詞', u'形容詞']) and (bunrui1 not in[u'数', u'非自立']):
                 if genkei != u"*":
                     termlist.append( genkei ) # 原型が存在すれば、それを抽出
                 else:
