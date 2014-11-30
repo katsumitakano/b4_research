@@ -1,28 +1,49 @@
 #!/bin/sh
+# $1: 読み込むXMLファイルのあるディレクトリ
+# $2: コーパスの種類を選択
+# $3: 最低単語数
+
+# 行列の作成と類似度の計算
+python makedocs.py $1 $2
+python makematrix.py $3
+python makeneighbour.py
+python maketable.py
+python svd.py 300
+
+# 作成した行列の情報をinfo.txtに書き込む
+touch info.txt
+: > info.txt
+echo "corpus:"$1 >> info.txt
+echo "kind:"$2 >> info.txt
+echo "threshold:"$3 >> info.txt
+wc -l terms.txt >> info.txt
+wc -l docs.txt >> info.txt
+
+# 移動するファイル群
+MOVE_FILE=(
+"docs.txt"
+"terms.txt"
+"eval_sigeki.txt"
+"eval_all.txt"
+"eval_data.pkl"
+"matrix.mat"
+"neighbours.dat"
+"load_mat.py"
+"research.py"
+"isomap.py"
+"lle.py"
+"svd.py"
+"svd_d300.mat"
+"check_terms.py"
+"mylib.py"
+"info.txt")
 
 # ディレクトリ名に使用
 DIR_DATE=`date +"%m%d_%H%M%S"`
 
-# 行列の作成と類似度の計算
-python makedocs.py $1 docs.txt
-python makematrix.py
-python makeneighbour.py
-# python cosine.py
-
 # 作成したデータをarchiveに移す
 mkdir archive/${DIR_DATE}
-cp docs.txt archive/${DIR_DATE}
-cp terms.txt archive/${DIR_DATE}
-cp matrix.mat archive/${DIR_DATE}
-cp neighbours.dat archive/${DIR_DATE}
-#cp cosine.dat archive/${DIR_DATE}
-cp load_mat.py archive/${DIR_DATE}
-cp mylib.py archive/${DIR_DATE}
-
-
-# 以下のプログラムが追加されていく？
-# python lsi.py
-# python isomap.py
-# python lle.py
-# python deeplearning.py
-
+for FILE in "${MOVE_FILE[@]}"
+do
+    cp $FILE archive/${DIR_DATE}
+done
