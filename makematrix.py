@@ -10,14 +10,15 @@ from scipy import io, sparse
 from mylib import measure_time
 
 @measure_time
-def makeMatrix( load_name='docs.txt', save_name='matrix.mat'):
+def makeMatrix( threshold=10 ):
     """
     docs.txt からlil形式の疎行列を作成する
     """
+    load_name='docs.txt'
+    save_name='matrix.mat'
     
     # df_dict: Document Frequency Dictionaly
     df_dict   = {}   # 文脈頻度の辞書
-    threshold = 5    # 最低出現単語数(n回以上出現した単語のみ保持)
     N = 0    # 単語数
     M = 0    # 文脈数
     
@@ -69,8 +70,8 @@ if __name__ == "__main__":
     argv = sys.argv
     argc = len(argv)
 
-    # 行列生成に使うファイルを指定できる
-    if argc == 3:
-        makeMatrix( load_name=argv[1], save_name=argv[2] )
+    # 最低単語数を指定
+    if argc == 2:
+        makeMatrix( threshold=int(argv[1]) )
     else:
         makeMatrix()

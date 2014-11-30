@@ -84,12 +84,13 @@ def getTermsLists_Mainichi(xml):
     return rlist
 
 @measure_time
-def makedocs(dir_path='testdata/', save_name='docs.txt'):
+def makedocs(dir_path='testdata/', corpus_kind='BCCWJ'):
     """
     一行毎に単語リストが書かれたファイルを準備
     @dir_path:  読み込むディレクトリ先
     @save_name: 保存するファイル名
     """
+    save_name = 'docs.txt'
     if  os.path.isfile( save_name ):
         os.remove( save_name )
     wfile = open ( save_name, 'a' )
@@ -97,13 +98,24 @@ def makedocs(dir_path='testdata/', save_name='docs.txt'):
     # ファイル名の一覧を取得
     files = getFileList( dir_path )
     
-    threshold = 5 # 最低単語数
+    threshold = 10 # 最低単語数(極端に短い記事を省く)
+
+    # コーパスを読み込む関数を選択
+    if   corpus_kind == 'BCCWJ':
+        getFunction = getTermsLists_MXML
+    elif corpus_kind == 'BNC':
+        getFunction = getTermsLists_BNC
+    elif corpus_kind == 'MAI':
+        getFunction = getTermsLists_Mainichi
+    else:
+        print "corpus_kind Error"
+        sys.exit()
+
+    # XMLファイルを読み込み、元となる文書ファイルを作成
     for filename in files:
         with open( filename, 'r') as f:
             xml = f.read()
-        #for tlist in getTermsLists_BNC(xml): #BNC用
-        #for tlist in getTermsLists_MXML(xml): #BCCWJ用
-        for tlist in getTermsLists_Mainichi(xml): #毎日新聞用
+        for tlist in getFunction(xml): # 指定された読み込み関数を使用
             if len(tlist) < threshold: continue # 抽出単語が少なすぎる場合は無視
             wfile.write(','.join(tlist).encode('utf_8') + '\n')
         # 進捗を表示
@@ -119,8 +131,8 @@ if __name__ == "__main__":
     # print getFileList(argv[1])
     if argc == 3:
         # 読み込むディレクトリ先と、
-        # 保存時のファイル名を指定
-        makedocs(dir_path=argv[1], save_name=argv[2])
+        # コーパスの種類を指定
+        makedocs(dir_path=argv[1], corpus_kind=argv[2])
     else:
         # デフォルトの指定で実行
         makedocs()
