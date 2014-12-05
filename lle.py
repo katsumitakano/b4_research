@@ -97,7 +97,7 @@ def embedding(spmat, W, d):
     I = sparse.eye(N)
     IW = I-W
     M = sp.dot( IW.T, IW ).toarray() # TODO: dotが遅い
-    #np.save("M_lle", M) # 行列保存
+    #np.savetxt("M_lle", M) # 行列保存
 
     # 固有値計算
     sys.stderr.write("Start Eigen Computation\n")

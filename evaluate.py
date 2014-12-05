@@ -54,10 +54,9 @@ def F_ave( matrix, relation, n_max ):
             Recall    = float(R)/C # 再現率
             Precision = float(R)/N # 適合率
             F = 2.0*R/(C+N)        # F値（式変形）
-            tmp.append(Recall)
+            tmp.append(F)
 
         result.append( np.array(tmp).mean() )
-#        print len(bunrui), tmp
 
     return np.array(result).mean()
 

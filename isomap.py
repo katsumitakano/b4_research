@@ -104,7 +104,7 @@ def MDS(D, d):
     S = D*D # 距離の2乗
     H = np.eye(N) - np.ones((N,N))/N # 中心化行列
     P = -0.5 * H.dot(S).dot(H) # ヤング・ハウスホルダー変換(-1/2*H*S*H)
-    #np.save("P_isomap", P) # 行列保存
+    #np.savetxt("P_isomap", P) # 行列保存
 
     # 固有値計算
     sys.stderr.write("Start Eigen Computation\n")
