@@ -17,7 +17,7 @@ if __name__ == "__main__":
         os.remove( save_name )
     wfile = open ( save_name, 'a' )
 
-    k = 100 # 近傍点の個数
+    k = 500 # 近傍点の個数
     N = matrix.shape[0] # データ数
 
     # フィッティング
