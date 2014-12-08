@@ -127,7 +127,7 @@ def Isomap(spmat, k=None, r=None, d=300, test=False):
     @p d: 埋め込み後の次元数
     @p test: Trueの時swiss_rollを読み込む
     """
-    INFVAL = 10000 # 適当に大きい値(np.infと交換)
+    INFVAL = 100000 # 適当に大きい値(np.infと交換)
 
     # 近傍点の探索
     if   k != None: # k近傍の実行
