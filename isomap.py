@@ -105,11 +105,14 @@ def MDS(D, d):
     H = np.eye(N) - np.ones((N,N))/N # 中心化行列
     P = -0.5 * H.dot(S).dot(H) # ヤング・ハウスホルダー変換(-1/2*H*S*H)
     #np.savetxt("P_isomap", P) # 行列保存
+    S = None # メモリ解放
+    H = None # メモリ解放
 
     # 固有値計算
     sys.stderr.write("Start Eigen Computation\n")
     eig_value, eig_vector = np.linalg.eigh(P)
     sys.stderr.write("End Eigen Computation\n")
+    P = None # メモリ解放
 
     ind = np.argsort(eig_value)[::-1] # 固有値の大きい順にソート
     p = ind[:d]

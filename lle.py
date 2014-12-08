@@ -98,11 +98,14 @@ def embedding(spmat, W, d):
     IW = I-W
     M = sp.dot( IW.T, IW ).toarray() # TODO: dotが遅い
     #np.savetxt("M_lle", M) # 行列保存
+    I  = None # メモリ解放
+    IW = None # メモリ解放
 
     # 固有値計算
     sys.stderr.write("Start Eigen Computation\n")
     eig_value, eig_vector = np.linalg.eigh(M)
     sys.stderr.write("End Eigen Computation\n")
+    M = None # メモリ解放
 
     ind = np.argsort(eig_value) # 固有値の小さい順にソート
     p = ind[1:d+1]              # 底を除くd個のインデックス
