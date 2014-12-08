@@ -94,6 +94,14 @@ def knn_graph(spmat, k, test=False):
     return G_sparse
 
 @measure_time
+def distance_matrix(G_sparse):
+    """
+    グラフ形式の行列から距離行列を生成する
+    @p G_sparse: 疎行列形式のグラフ
+    """
+    return csgraph.dijkstra(G_sparse, directed=False)
+
+@measure_time
 def MDS(D, d):
     """
     MDSにより距離行列を低次元に埋め込む
@@ -147,7 +155,7 @@ def Isomap(spmat, k=None, r=None, d=300, test=False):
 
     # 測地線距離に基づく距離行列D_Gを作成
     sys.stderr.write("compute distance matrix\n")
-    D_G = csgraph.dijkstra(G_sparse, directed=False)
+    D_G = distance_matrix(G_sparse)
     D_G[D_G == np.inf] = INFVAL # infを適当に巨大な値に変更
 
     # D_GをMDSで畳み込む
