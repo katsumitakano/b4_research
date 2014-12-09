@@ -10,12 +10,12 @@ from scipy import io, sparse
 from mylib import measure_time
 
 @measure_time
-def makeMatrix( threshold=10 ):
+def makeTFMatrix( threshold=10 ):
     """
     docs.txt からlil形式の疎行列を作成する
     """
     load_name='docs.txt'
-    save_name='matrix.mat'
+    save_name='matrix_tf.mat'
     
     # df_dict: Document Frequency Dictionaly
     df_dict   = {}   # 文脈頻度の辞書
@@ -53,7 +53,7 @@ def makeMatrix( threshold=10 ):
                 idf = math.log( float(M)/df_dict[term] )
                 lil_matrix[i,j] = tf*idf
 
-        print "makematrix:%d/%d" % (i, N) # 進捗確認
+        print "makeTFmatrix:%d/%d" % (i, N) # 進捗確認
     
     # mat形式で保存 (decodeしないとloadmatができない)
     decoded_terms = map(lambda t: t.decode('utf_8'), terms)
@@ -72,6 +72,6 @@ if __name__ == "__main__":
 
     # 最低単語数を指定
     if argc == 2:
-        makeMatrix( threshold=int(argv[1]) )
+        makeTFMatrix( threshold=int(argv[1]) )
     else:
-        makeMatrix()
+        makeTFMatrix()
