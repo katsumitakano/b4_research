@@ -13,7 +13,7 @@ def loadmat():
     """
     matrixファイルの読み込み
     """
-    matfile = spio.loadmat('matrix.mat')
+    matfile = spio.loadmat('matrix_co.mat')
     return (matfile['matrix'], \
             matfile['terms'])
 

@@ -8,7 +8,7 @@ from sklearn.neighbors import NearestNeighbors
 from mylib import measure_time
 
 if __name__ == "__main__":
-    mat_file = spio.loadmat('matrix.mat')
+    mat_file = spio.loadmat('matrix_co.mat')
     matrix   = mat_file['matrix']
 
     save_name = "neighbours.dat"
