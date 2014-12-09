@@ -3,22 +3,23 @@
 
 ## 使い方
 基本的な流れとして、まず make.sh に引数を与えて実行します。
-引数にはBCCWJのM-XML形式のコーパスを指定します。
+引数にはコーパスのディレクトリ、コーパスの種類、最低単語数を指定します。
 ```
-./make.sh /volsys/amber/nlp/BCCWJ/disk1/M-XML/PN/PN
+$ ./make.sh /volsys/amber/nlp/BCCWJ/disk1/M-XML/PN/PN BCCWJ 20
 ```
 
 様々なファイルが生成されますが、matrix.matが一番重要なファイルです。
 この後、isomap.pyやlle.pyを用いてそれぞれの意味空間を作成します。
 ```
-python isomap.py 6 200
-python lle.py 4 200
-python svd 200
+$ python isomap.py 6 200
+$ python lle.py 4 200
+$ python svd 200
 ```
 
 意味空間が作成できたら、research.pyで意味空間の探索が行えます。
+:c[osine]と:e[uclid]で距離計算の方法を変更できます。
 ```
-python research.py
+$ python research.py
 Input matrix name (***.mat) -> svd_d200.mat
 terms? -> 総理
 コイズミ 0.862873733439
@@ -36,7 +37,29 @@ terms? -> 総理　車
 terms? -> ...
 ```
 
-最後に評価を行います…（そのうち書く）
+最後にevaluate.pyで意味空間の評価を行います。
+```
+$ python evaluate svd_d300.mat
+idiom_Rate.dat
+0.42099061847
+co_exist_Rate.dat
+0.493707107843
+syntactic_Rate.dat
+0.375587214052
+part_of_Rate.dat
+0.467864923747
+member_of_Rate.dat
+0.527350562867
+synonym_Rate.dat
+0.610165118679
+antnym_Rate.dat
+0.647058823529
+same_member_Rate.dat
+0.485294117647
+```
+
+引数に評価を行う行列ファイルの名前を与えると、各関係での評価値を出してくれます。
+基本はF値を出力しますが、再現率を見たい場合はプログラムの中身を書き換えて下さい。
 
 ## プログラム一覧
 
@@ -44,28 +67,37 @@ terms? -> ...
 * makedocs.py	- 行列生成の元となるファイルを生成
 * makematrix.py	- 行列と単語関連付けファイルの生成
 * makeneighbour.py	- 近傍点を格納したファイルを生成
+* maketable.py		- 評価に使う表形式のデータ（＋α）を生成
 * cosine.py     - コサイン類似度を用いて単語間の類似度を測る
 * isomap.py	- Isomapで次元圧縮した行列ファイルを生成
 * lle.py	- LocallyLinearEmbeddingで次元圧縮した行列ファイルを生成
 * svd.py	- SVDで次元圧縮した行列ファイルを生成
+* check_terms.py  - 評価に使う単語の中から意味空間に含まれていない単語を出力
+* evaluate.py	- 意味空間の評価を行うプログラム
 * load_mat.py	- iPythonで作業する準備用（%ipython -i load_mat.py）
 * research.py	- 次元圧縮後の意味空間を探索する
 * mylib.py	- 自作の便利関数郡
 * make.sh	- コーパスから意味空間を作成する一連のプログラムを実行
 * clear.sh	- Emacsの一時ファイル（.~）を削除
+* Mainichi_to_xml.py	- 毎日新聞コーパスからCabochaを用いて段落単位のxmlファイルを生成
 
 ### 生成されるリソース
 * docs.txt	- 行列生成の元となるファイル
 * terms.txt	- 行列に含まれる全単語を並べたファイル
 * matrix.mat	- 行列ファイル(単語辞書も付属)
 * neighbours.dat  - makeneighbour.pyで生成された近傍点のファイル
+* eval_data.pkl	  - 秋山さんの分類データを表形式にまとめたもの
+* eval_sigeki.txt - 分類データのうちの刺激語
+* eval_all.txt	  - 分類データの全単語（刺激語も含む）
 * cosine.dat	  - cosine.pyで生成された単語間の類似度ファイル
-* P_isomap.npy	  - Isomapで固有値計算する前の行列（計算用に使用）
-* M_lle.npy	  - LocallyLinearEmbeddingで固有値計算する前の行列（計算用に使用）
 * process.log	  - プログラムの実行時間などが保存されるログファイル
+* info.txt	  - 意味空間の情報を記述（コーパスの種類、最低単語数、単語数、文脈数）
+* (P_isomap.npy	  - Isomapで固有値計算する前の行列（計算用に使用）)
+* (M_lle.npy	  - LocallyLinearEmbeddingで固有値計算する前の行列（計算用に使用）)
 
 ### ディレクトリ
 * archive/	- 作成された行列ファイル置き場
+* corpus/	- コーパス置き場
 * eval_data/	- 意味空間の評価に使う連想語の分類データ
 * testdata/	- プログラムの動きを確認するためのテストデータ
 * sandbox/	- 砂遊び
