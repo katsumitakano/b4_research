@@ -11,7 +11,8 @@ $ ./make.sh /volsys/amber/nlp/BCCWJ/disk1/M-XML/PN/PN BCCWJ 20
 様々なファイルが生成されますが、matrix.matが一番重要なファイルです。
 この後、isomap.pyやlle.pyを用いてそれぞれの意味空間を作成します。
 ```
-$ python isomap.py 6 200
+$ python isomap.py -k 6 200
+$ python isomap.py -r 8 200
 $ python lle.py 4 200
 $ python svd 200
 ```
@@ -19,8 +20,8 @@ $ python svd 200
 意味空間が作成できたら、research.pyで意味空間の探索が行えます。
 :c[osine]と:e[uclid]で距離計算の方法を変更できます。
 ```
-$ python research.py
-Input matrix name (***.mat) -> svd_d200.mat
+$ python research.py svd_d200.mat
+Matfile loaded!
 terms? -> 総理
 コイズミ 0.862873733439
 大臣 0.837900125451
@@ -34,6 +35,8 @@ terms? -> 総理
 総裁 0.773829276498
 terms? -> 総理　車
 0.00266860434679
+terms? -> :e
+Change simType to "euclid"
 terms? -> ...
 ```
 
