@@ -5,7 +5,8 @@
 
 # 行列の作成と類似度の計算
 python makedocs.py $1 $2
-python makematrix.py $3
+python makeCOmatrix.py $3
+python makeTFmatrix.py $3
 python makeneighbour.py
 python maketable.py
 python svd.py 300
@@ -26,7 +27,8 @@ MOVE_FILE=(
 "eval_sigeki.txt"
 "eval_all.txt"
 "eval_data.pkl"
-"matrix.mat"
+"matrix_co.mat"
+"matrix_tf.mat"
 "neighbours.dat"
 "load_mat.py"
 "research.py"
