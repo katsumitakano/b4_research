@@ -18,8 +18,8 @@ def makeCOMatrix( threshold=10 ):
     save_name='matrix_co.mat'
     
     # df_dict: Document Frequency Dictionaly
-    df_dict   = {}   # 文脈頻度の辞書
-    N = 0    # 単語数
+    df_dict = {} # 文脈頻度の辞書
+    N = 0        # 単語数
 
     # 文書をリストに格納しておく（docsが100MB程度なら問題ない）
     documents = [ line.rstrip().split(',') \
@@ -51,9 +51,25 @@ def makeCOMatrix( threshold=10 ):
 
         print "makeCOmatrix:%d/%d" % (i, N) # 進捗確認
     
+    # 相互情報量による重み付け
+    weight_matrix = sparse.lil_matrix( (N, N) )
+    sum_all  = lil_matrix.sum()
+    sum_axis = np.array( lil_matrix.sum(axis=0) )[0] # 各列の和
+    for i in xrange(N):
+        for j in xrange(N):
+            ptc = lil_matrix[i,j]
+            if ptc == 0: continue # 要素が0の時は計算しない
+            pt1 = sum_axis[i]
+            pt2 = sum_axis[j]
+            ans = ( sum_all*ptc )/( pt1*pt2 )
+            pmi = math.log(ans, 2)
+            weight_matrix[i,j] = pmi
+
+        print "weight_pmi:%d/%d" % (i, N) # 進捗確認
+
     # mat形式で保存 (decodeしないとloadmatができない)
     decoded_terms = map(lambda t: t.decode('utf_8'), terms)
-    io.savemat( save_name, {'matrix':lil_matrix, 'terms':decoded_terms} )
+    io.savemat( save_name, {'matrix':weight_matrix, 'terms':decoded_terms} )
 
     # 全単語をファイルに書き出しておく
     with codecs.open("terms.txt", 'w', "utf-8") as f:
