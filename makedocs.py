@@ -22,7 +22,25 @@ from BeautifulSoup import BeautifulStoneSoup
 from mylib import measure_time
 from mylib import getFileList
 
-def getTermsLists_MXML(xml):
+def getTermsLists_MXMLs(xml):
+    """
+    xmlから <sentence> タグの中身だけ取得
+    """
+    rlist = [] # returnするリスト
+    termlist = []
+    soup = BeautifulStoneSoup(xml)
+    # 名詞/動詞/形容詞の単語のみ抽出
+    extraction = re.compile(u'名詞-(普通名詞|固有名詞)|動詞|形容詞')
+    for paragraph in soup.findAll('sentence'):
+        for suw in paragraph.findAll('suw'): # TODO: この辺高速化(lxml使う？)
+            if extraction.match(suw['pos']):
+                termlist.append(suw['lemma']) # 原型を格納
+        rlist.append( termlist )
+        termlist = []
+
+    return rlist
+
+def getTermsLists_MXMLp(xml):
     """
     xmlから <paragraph> タグの中身だけ取得
     """
@@ -101,8 +119,10 @@ def makedocs(dir_path='testdata/', corpus_kind='BCCWJ'):
     threshold = 10 # 最低単語数(極端に短い記事を省く)
 
     # コーパスを読み込む関数を選択
-    if   corpus_kind == 'BCCWJ':
-        getFunction = getTermsLists_MXML
+    if   corpus_kind == 'BCCWJp':
+        getFunction = getTermsLists_MXMLp
+    elif   corpus_kind == 'BCCWJs':
+        getFunction = getTermsLists_MXMLs
     elif corpus_kind == 'BNC':
         getFunction = getTermsLists_BNC
     elif corpus_kind == 'MAI':
