@@ -6,7 +6,9 @@
 # 行列の作成と類似度の計算
 python makedocs.py $1 $2
 python makeCOmatrix.py $3
+cp terms.txt terms_co.txt
 python makeTFmatrix.py $3
+cp terms.txt terms_tf.txt
 python makeneighbour.py
 python maketable.py
 python svd.py 300
@@ -17,13 +19,18 @@ touch info.txt
 echo "corpus:"$1 >> info.txt
 echo "kind:"$2 >> info.txt
 echo "threshold:"$3 >> info.txt
-wc -l terms.txt >> info.txt
+echo "terms_co" >> info.txt
+wc -l terms_co.txt >> info.txt
+echo "terms_tf" >> info.txt
+wc -l terms_tf.txt >> info.txt
 wc -l docs.txt >> info.txt
 
 # 移動するファイル群
 MOVE_FILE=(
 "docs.txt"
-"terms.txt"
+"terms_co.txt"
+"terms_tf.txt"
+"evaluate.py"
 "eval_sigeki.txt"
 "eval_all.txt"
 "eval_data.pkl"
