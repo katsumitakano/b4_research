@@ -25,6 +25,7 @@ def rnn_graph(spmat, r, test=False):
     @p r: 近傍半径
     @r 疎行列形式の近傍グラフ
     """
+    i = 0
     N = spmat.shape[0] # 距離行列の大きさ
     G_sparse = sparse.lil_matrix( (N,N) )
 
@@ -39,10 +40,12 @@ def rnn_graph(spmat, r, test=False):
             G_sparse[i, J[1:]] = dists[i][1:] # FancyIndex(自分との距離は使わない)
     else:
         # --- 本番時はファイルから読み込む
-        neighs = np.loadtxt('neighbours.dat', delimiter=" ", dtype="S")
+        fp = open("neighbours.dat", "r")
+        line = fp.readline()
 
         # 近傍探索グラフの作成
-        for i, neigh in enumerate(neighs):
+        while line:
+            neigh = line.rstrip().split()
             for idx_dist in neigh[1:]:
                 idx, dist = idx_dist.split(":")
                 idx  = int(idx)
@@ -51,6 +54,8 @@ def rnn_graph(spmat, r, test=False):
                     break # 距離が近傍半径を超えたら終了
                 else:
                     G_sparse[i, idx] = dist
+            i += 1
+            line = fp.readline()
             sys.stderr.write("rnn_graph:%d\n" % (i))
 
     return G_sparse
@@ -63,6 +68,7 @@ def knn_graph(spmat, k, test=False):
     @p k: 近傍点の個数
     @r 疎行列形式の近傍グラフ
     """
+    i = 0
     N = spmat.shape[0] # 距離行列の大きさ
     G_sparse = sparse.lil_matrix( (N,N) )
 
@@ -79,16 +85,19 @@ def knn_graph(spmat, k, test=False):
             G_sparse[i, J] = dists[i] # FancyIndex
     else:
         # --- 本番時はファイルから読み込む        
-        neighs = np.loadtxt('neighbours.dat', delimiter=" ", dtype="S")
-        neighs = neighs[:,1:k+1]
+        fp = open("neighbours.dat", "r")
+        line = fp.readline()
 
         # 近傍探索グラフの作成
-        for i, neigh in enumerate(neighs):
-            for idx_dist in neigh:
+        while line:
+            neigh = line.rstrip().split()
+            for idx_dist in neigh[1:k+1]:
                 idx, dist = idx_dist.split(":")
                 idx  = int(idx)
                 dist = float(dist)
                 G_sparse[i, idx] = dist
+            i += 1
+            line = fp.readline()
             sys.stderr.write("knn_graph:%d\n" % (i))
 
     return G_sparse

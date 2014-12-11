@@ -25,6 +25,7 @@ def find_neighbours(spmat, k, test=False):
     @p k: 近傍点の個数
     @r 各点に対応する近傍点の位置
     """
+    i = 0
     N = spmat.shape[0] # データ数
 
     if test:
@@ -35,16 +36,19 @@ def find_neighbours(spmat, k, test=False):
         indices = indices[:,1:] # 1列目は自分との距離なので使わない
     else:
         # --- 本番時はファイルから読み込む        
-        neighs = np.loadtxt('neighbours.dat', delimiter=" ", dtype="S")
-        neighs = neighs[:,1:k+1]
-        indices = np.empty(neighs.shape, dtype=np.int)
+        fp = open("neighbours.dat", "r")
+        line = fp.readline()
+        indices = np.empty((N, k), dtype=np.int)
 
         # 近傍探索グラフの作成
-        for i, neigh in enumerate(neighs):
-            for j, idx_dist in enumerate(neigh):
+        while line:
+            neigh = line.rstrip().split()
+            for j, idx_dist in enumerate(neigh[1:k+1]):
                 idx, dist = idx_dist.split(":")
                 idx  = int(idx)
                 indices[i, j] = idx
+            i += 1
+            line = fp.readline()
             sys.stderr.write("knn_graph:%d\n" % (i))
 
     return indices
