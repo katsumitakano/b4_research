@@ -127,8 +127,12 @@ def MDS(D, d):
 
     W = eig_value[p]    # 上位p個の固有値
     X = eig_vector[:,p] # 上位p個の固有ベクトル
+    Y = np.sqrt(W)*X
     
-    return np.sqrt(W)*X
+    # 保存用に固有値と固有ベクトルも返却
+    dmax = 1000
+    if dmax > N: dmax = N
+    return Y, eig_value[ind[:dmax]], eig_vector[:,ind[:dmax]]
 
 def Isomap(spmat, k=None, r=None, d=300, test=False):
     """
@@ -138,14 +142,17 @@ def Isomap(spmat, k=None, r=None, d=300, test=False):
     @p d: 埋め込み後の次元数
     @p test: Trueの時swiss_rollを読み込む
     """
+    suffix = ""     # 固有値、固有ベクトルの保存名に使用
     INFVAL = 100000 # 適当に大きい値(np.infと交換)
 
     # 近傍点の探索
     if   k != None: # k近傍の実行
+        suffix = "_k%d" % (k)
         sys.stderr.write("making knn_graph\n")
         G_sparse = knn_graph(spmat, k, test)
 
     elif r != None: # 近傍半径の実行
+        suffix = "_r%d" % (r)
         sys.stderr.write("making rnn_graph\n")
         G_sparse = rnn_graph(spmat, r, test)
 
@@ -160,7 +167,12 @@ def Isomap(spmat, k=None, r=None, d=300, test=False):
 
     # D_GをMDSで畳み込む
     sys.stderr.write("embedding with MDS...\n")
-    Y = MDS(D_G, d)
+    Y, eig_value, eig_vector = MDS(D_G, d)
+
+    # 固有値、固有ベクトルの保存
+    sys.stderr.write("saving eig_value and eig_vector...\n")
+    np.save("isomap_eval"+suffix, eig_value)
+    np.save("isomap_evec"+suffix, eig_vector)
 
     sys.stderr.write("OK!\n")
     return Y

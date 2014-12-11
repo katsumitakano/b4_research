@@ -110,7 +110,12 @@ def embedding(spmat, W, d):
     ind = np.argsort(eig_value) # 固有値の小さい順にソート
     p = ind[1:d+1]              # 底を除くd個のインデックス
 
-    return eig_vector[:,p]  # 底を除くd個の固有ベクトル
+    Y = eig_vector[:,p]   # 底を除くd個の固有ベクトル
+
+    # 保存用に固有値と固有ベクトルも返却
+    dmax = 1000
+    if dmax > N: dmax = N
+    return Y, eig_value[ind[:dmax]], eig_vector[:,ind[:dmax]]
 
 def LLE(spmat, k, d, test=False):
     """
@@ -120,15 +125,25 @@ def LLE(spmat, k, d, test=False):
     @p d: 埋め込み後の次元数
     @p test: Trueの時swiss_rollを読み込む
     """
+    suffix = "_k%d" % (k)
+
     # 1.近傍点の取得
     sys.stderr.write("find_neighbours\n")
     neighs = find_neighbours(spmat, k, test)
+
     # 2.重み行列の計算
     sys.stderr.write("solve_weights\n")
     W = solve_weights(spmat, neighs)
+
     # 3.低次元へ埋め込み
     sys.stderr.write("embedding...\n")
-    Y = embedding(spmat, W, d)
+    Y, eig_value, eig_vector = embedding(spmat, W, d)
+
+    # 4.固有値、固有ベクトルの保存
+    sys.stderr.write("saving eig_value and eig_vector...\n")
+    np.save("lle_eval"+suffix, eig_value)
+    np.save("lle_evec"+suffix, eig_vector)
+
     sys.stderr.write("OK!\n")
     return Y
 
