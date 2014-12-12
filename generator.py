@@ -1,10 +1,8 @@
 # coding: utf-8
 import os
 import sys
-import codecs
 import numpy as np
 from scipy import io as spio
-from subprocess import call
 
 argv = sys.argv
 argc = len(argv)
@@ -25,7 +23,7 @@ _param_chk = evec_file[0:-4].split('_')[2] # チェック用
 
 # --- エラー処理
 if kind not in ['isomap', 'lle']:
-    sys.stderr.write('Usage: python generator.py 種類[isomap|lle] 固有値 固有ベクトル')
+    sys.stderr.write('Error: This is not isomap or lle.\n')
     sys.exit()
 elif kind != _kind_chk: 
     sys.stderr.write('Error: Use same Kind.\n')
@@ -48,6 +46,7 @@ try:
 except OSError:
     sys.stderr.write("OK. Directory is Exist.\n")
 
+
 # 種類に合わせて圧縮用の関数を切り替え
 if   kind == 'isomap':
     def compress(dim):
@@ -58,6 +57,7 @@ if   kind == 'isomap':
 elif kind == 'lle':
     def compress(dim):
         return evecs[:,:dim] # dim個の固有ベクトル
+
 
 # --- 複数次元の意味空間を生成
 for dim in xrange(50, 310, 10):
