@@ -89,10 +89,9 @@ def solve_weights(spmat, neighs):
     return W.tocsr()
 
 @measure_time
-def embedding(spmat, W, d):
+def embedding(W, d):
     """
     元の行列を低次元に埋め込む
-    @p spmat: 疎行列形式の行列
     @p W: 重み行列
     @p d: 圧縮後の次元数
     @r 埋め込み後の行列
@@ -100,7 +99,8 @@ def embedding(spmat, W, d):
     N = W.shape[0]
     I = sparse.eye(N)
     IW = I-W
-    M = sp.dot( IW.T, IW ).toarray() # TODO: dotが遅い
+    M = IW.T.dot(IW)
+    M = M.toarray()
     #np.savetxt("M_lle", M) # 行列保存
     I  = None # メモリ解放
     IW = None # メモリ解放
@@ -141,7 +141,7 @@ def LLE(spmat, k, d, test=False):
 
     # 3.低次元へ埋め込み
     sys.stderr.write("embedding...\n")
-    Y, eig_value, eig_vector = embedding(spmat, W, d)
+    Y, eig_value, eig_vector = embedding(W, d)
 
     # 4.固有値、固有ベクトルの保存
     sys.stderr.write("saving eig_value and eig_vector...\n")
