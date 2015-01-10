@@ -1,4 +1,5 @@
 # coding: utf-8
+import re
 import sys
 import numpy as np
 import scipy as sp
@@ -47,6 +48,7 @@ def print_top(term, n, sim_func=sim_cosine):
 
 # ---------- 自作インタプリターの起動 ---------- #
 sim_func = sim_cosine
+top_n = 10 # 上位何件表示するか
 while(1):
     input_line = raw_input("terms? -> ").decode('utf-8')
     input_list = input_line.split()
@@ -70,6 +72,11 @@ while(1):
         print("Change simType to \"euclid\"")
         sim_func = sim_euclid; continue
 
+    elif re.match(r':\d+', input_list[0]):
+        # :[数字]にマッチしたら表示件数を変更
+        top_n = int(input_list[0][1:])
+        print("Change top_n to %d" % (top_n))
+
     elif len(input_list) == 1:
         # 単語1つ： 類似度が高い上位n件を表示
         try:
@@ -77,7 +84,8 @@ while(1):
         except ValueError:
             print("No such term: %s" % (input_list[0]))
             continue
-        print_top(input_list[0], 10, sim_func)
+        target = input_list[0]
+        print_top(target, top_n, sim_func)
 
     elif len(input_list) == 2:
         # 単語2つ： 2単語間のコサイン類似度を計算
