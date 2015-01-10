@@ -3,6 +3,7 @@ sandbox/
 archive/
 eval_data/
 testdata/
+*.csv
 *.log
 *.dat
 *.txt

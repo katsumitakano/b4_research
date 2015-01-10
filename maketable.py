@@ -85,3 +85,5 @@ with codecs.open("eval_all.txt", "w", "utf-8") as f:
     f.writelines(eval_all)
 
 tables.to_pickle("eval_data.pkl")
+
+tables.to_csv("eval_data.csv", encoding="utf-8")
