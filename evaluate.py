@@ -36,7 +36,7 @@ def F_ave( matrix, relation, n_max ):
         try:
             index = terms.index(sigeki)
         except:
-            sys.stderr.write("%s not in\n" % (sigeki.encode("utf-8")))
+            #sys.stderr.write("%s not in\n" % (sigeki.encode("utf-8")))
             continue                      # 存在しない刺激語を省く
 
         # 刺激語を元に行列をソート
@@ -60,6 +60,44 @@ def F_ave( matrix, relation, n_max ):
 
     return np.array(result).mean()
 
+def rank_mean( matrix, relation ):
+    """
+    分類語のランクの中央値を計算
+    """
+    M = matrix['Y']
+    terms = matrix['terms']
+    terms = map(lambda t: t.rstrip(), terms) # 末尾の空白削除
+
+    result = [] # F_nの値を保持
+    sigeki_bunrui = relation.dropna()
+
+    for sigeki in sigeki_bunrui.index:
+        bunrui = sigeki_bunrui[sigeki]
+        # sigeki: 刺激語
+        # bunrui: ある関係における刺激語に対する分類語
+
+        # 単語の存在をチェック
+        bunrui = set(bunrui) & set(terms) # 存在しない分類語を省く
+        if len(bunrui) == 0: continue
+        try:
+            index = terms.index(sigeki)
+        except:
+            #sys.stderr.write("%s not in\n" % (sigeki.encode("utf-8")))
+            continue                      # 存在しない刺激語を省く
+
+        # 刺激語を元に行列をソート
+        sigeki_vec = M[index]
+        sims = np.array([sim_cosine(sigeki_vec, vec) for vec in M])
+        sorted_indices = sims.argsort()[::-1]
+
+        for bun in bunrui:
+            sorted_terms = [terms[idx] for idx in sorted_indices]
+            rank = sorted_terms.index(bun) + 1
+            result.append( rank )
+            #print bun, rank
+
+    return np.array(result).mean()
+
 @measure_time
 def evaluate( mat_name ):
     """
@@ -79,7 +117,8 @@ def evaluate( mat_name ):
     # 全関係で平均F値を取る
     for column in relation.columns:
         print column
-        print F_ave( matrix, relation[column], n_max )
+        #print F_ave( matrix, relation[column], n_max )
+        print rank_mean( matrix, relation[column] )
 
 
 if __name__ == "__main__":
