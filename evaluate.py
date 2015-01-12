@@ -96,7 +96,8 @@ def rank_mean( matrix, relation ):
             result.append( rank )
             #print bun, rank
 
-    return np.array(result).mean()
+    #return np.array(result).mean()
+    return int(np.median(np.array(result)))
 
 @measure_time
 def evaluate( mat_name ):
