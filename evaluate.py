@@ -24,9 +24,12 @@ def Retrieval_eval( matrix, relation, n_max, eval_type ):
 
     result = [] # F_nの値を保持
     sigeki_bunrui = relation.dropna()
+    count_total = 0
+    count_exist = 0
 
     for sigeki in sigeki_bunrui.index:
         bunrui = sigeki_bunrui[sigeki]
+        count_total += len(bunrui)
         # sigeki: 刺激語
         # bunrui: ある関係における刺激語に対する分類語
 
@@ -38,6 +41,7 @@ def Retrieval_eval( matrix, relation, n_max, eval_type ):
         except:
             #sys.stderr.write("%s not in\n" % (sigeki.encode("utf-8")))
             continue                      # 存在しない刺激語を省く
+        count_exist += len(bunrui)
 
         # 刺激語を元に行列をソート
         sigeki_vec = M[index]
@@ -59,6 +63,7 @@ def Retrieval_eval( matrix, relation, n_max, eval_type ):
 
         result.append( np.array(tmp).mean() )
 
+    print "%d/%d" % ( count_exist, count_total ) # 評価した単語対の表示
     return np.array(result).mean()
 
 def Rank_eval( matrix, relation, eval_type ):
@@ -71,9 +76,12 @@ def Rank_eval( matrix, relation, eval_type ):
 
     result = []
     sigeki_bunrui = relation.dropna()
+    count_total = 0
+    count_exist = 0
 
     for sigeki in sigeki_bunrui.index:
         bunrui = sigeki_bunrui[sigeki]
+        count_total += len(bunrui)
         # sigeki: 刺激語
         # bunrui: ある関係における刺激語に対する分類語
 
@@ -85,6 +93,7 @@ def Rank_eval( matrix, relation, eval_type ):
         except:
             #sys.stderr.write("%s not in\n" % (sigeki.encode("utf-8")))
             continue                      # 存在しない刺激語を省く
+        count_exist += len(bunrui)
 
         # 刺激語を元に行列をソート
         sigeki_vec = M[index]
@@ -96,6 +105,8 @@ def Rank_eval( matrix, relation, eval_type ):
             rank = sorted_terms.index(bun) + 1
             result.append( rank )
             #print bun, rank
+
+    print "%d/%d" % ( count_exist, count_total ) # 評価した単語対の表示
 
     if eval_type == "mean":
         return np.array(result).mean()
