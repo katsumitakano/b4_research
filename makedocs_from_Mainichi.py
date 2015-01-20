@@ -3,6 +3,7 @@
 # 段落単位または文単位の文章ファイルを生成する
 
 import os
+import re
 import sys
 import codecs
 import MeCab
