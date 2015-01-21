@@ -70,21 +70,19 @@ def solve_weights(spmat, neighs):
     W = sparse.lil_matrix( (N,N) ) # 重み行列の宣言
     spmat = spmat.tocsr() # 行形式の参照を速くする
     for i, neigh in enumerate(neighs):
-        Z  = spmat[neigh].toarray() # 1.05ms
-        Xi = spmat[i].toarray() # 152us
-        Z = Z-Xi # 607us
-        C = np.dot(Z, Z.T) # 分散共分散行列の計算 2.99ms
+        Z = spmat[neigh] - spmat[[i]*k] # 近傍点から引き算
+        C = Z.dot(Z.T).toarray() # 分散共分散行列の計算
         # 正規化するためCに正規化定数を足す
-        trace = C.trace() # 3.19us
+        trace = C.trace()
         if trace > 0:
             eps = 0.001*trace
         else:
             eps = 0.001
-        C += I*eps # 1.5us
-        w = sp.linalg.solve(C, ones, sym_pos=True) # 45.5us
-        w = w/sum(w) # 割って正規化 5.31us
-        W[i, neigh] = w # 近傍点の解を格納 139us
-        sys.stderr.write("solve_weights:%d\n" % (i)) # 31.7us
+        C += I*eps
+        w = sp.linalg.solve(C, ones, sym_pos=True)
+        w = w/sum(w)    # 割って正規化
+        W[i, neigh] = w # 近傍点の解を格納
+        sys.stderr.write("solve_weights:%d\n" % (i))
 
     return W.tocsr()
 
