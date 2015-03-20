@@ -4,6 +4,8 @@
 ## 使い方
 基本的な流れとして、まず make.sh に引数を与えて実行します。
 引数にはコーパスのディレクトリ、コーパスの種類、最低単語数を指定します。
+**でも恐ろしく時間がかかるから気軽に実行しないほうがいい。
+プログラムの実行手順を確認して、個別に実行したほうが無難。**
 ```
 $ ./make.sh /volsys/amber/nlp/BCCWJ/disk1/M-XML/PN/PN BCCWJ 20
 ```
@@ -40,7 +42,7 @@ Change simType to "euclid"
 terms? -> ...
 ```
 
-最後にevaluate.pyで意味空間の評価を行います。
+最後にevaluate.pyで意味空間の評価を行います（eval_data.pklが必要です）。
 ```
 $ python evaluate svd_d300.mat
 idiom_Rate.dat
@@ -67,27 +69,34 @@ same_member_Rate.dat
 ## プログラム一覧
 
 ### ソースコード
+* make.sh	- コーパスから意味空間を作成する一連のプログラムを実行
 * makedocs.py	- 行列生成の元となるファイルを生成
-* makematrix.py	- 行列と単語関連付けファイルの生成
+* makedocs_from_Mainichi.py	- 毎日新聞コーパスから直接文書ファイルを生成する
+* makeCOmatrix.py	- 共起頻度行列の生成
+* makeTFmatrix.py	- 単語文脈行列の生成
 * makeneighbour.py	- 近傍点を格納したファイルを生成
 * maketable.py		- 評価に使う表形式のデータ（＋α）を生成
-* cosine.py     - コサイン類似度を用いて単語間の類似度を測る
 * isomap.py	- Isomapで次元圧縮した行列ファイルを生成
 * lle.py	- LocallyLinearEmbeddingで次元圧縮した行列ファイルを生成
 * svd.py	- SVDで次元圧縮した行列ファイルを生成
 * check_terms.py  - 評価に使う単語の中から意味空間に含まれていない単語を出力
 * evaluate.py	- 意味空間の評価を行うプログラム
-* load_mat.py	- iPythonで作業する準備用（%ipython -i load_mat.py）
 * research.py	- 次元圧縮後の意味空間を探索する
+* generator.py	- 固有値と固有ベクトルのファイルから次元数の異なる行列を生成する
 * mylib.py	- 自作の便利関数郡
-* make.sh	- コーパスから意味空間を作成する一連のプログラムを実行
+* load_mat.py	- iPythonで作業する準備用（%ipython -i load_mat.py）
+
+### ソースコード（ほぼ使ってない）
 * clear.sh	- Emacsの一時ファイル（.~）を削除
-* Mainichi_to_xml.py	- 毎日新聞コーパスからCabochaを用いて段落単位のxmlファイルを生成
+* cosine.py     - コサイン類似度を用いて単語間の類似度を測る
+* denseEigSolver.cpp	- Eigenを使用した固有値分解（Pythonより遅かった）
+
 
 ### 生成されるリソース
 * docs.txt	- 行列生成の元となるファイル
 * terms.txt	- 行列に含まれる全単語を並べたファイル
-* matrix.mat	- 行列ファイル(単語辞書も付属)
+* matrix_co.mat	- 共起頻度行列のファイル(単語辞書も付属)
+* matrix_tf.mat	- 単語文脈行列のファイル(単語辞書も付属)
 * neighbours.dat  - makeneighbour.pyで生成された近傍点のファイル
 * eval_data.pkl	  - 秋山さんの分類データを表形式にまとめたもの
 * eval_sigeki.txt - 分類データのうちの刺激語
@@ -98,6 +107,7 @@ same_member_Rate.dat
 * (P_isomap.npy	  - Isomapで固有値計算する前の行列（計算用に使用）)
 * (M_lle.npy	  - LocallyLinearEmbeddingで固有値計算する前の行列（計算用に使用）)
 
+
 ### ディレクトリ
 * archive/	- 作成された行列ファイル置き場
 * corpus/	- コーパス置き場
@@ -107,6 +117,9 @@ same_member_Rate.dat
 
 
 ## プログラムの詳細
+**あまりドキュメントを整備してない。**   
+**ソースコードの中身読んだほうが確実。**
+
 ### makedocs.py [dir_path] [save_name}
 
 BCCWJのM-XMLファイル群から行列生成の元となるファイルを作成する。
