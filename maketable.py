@@ -47,7 +47,7 @@ for filename in filelist:
         rate   = float(data[2]) # 比率（ 例：0.80 ）
         ans    = data[3][:-1]   # 回答数（ 例：4/5 ）
         # 過半数を超えた連想語のみ採用
-        if rate >= 0.6:
+        if rate >= 0.5:
             tables[filename][sigeki].append(renso)
 
 # 空配列をNaNに変換
